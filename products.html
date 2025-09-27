@@ -31,7 +31,7 @@
     <nav class="bg-white/80 backdrop-blur-lg shadow-md p-4 sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
             <a href="index.html" class="text-3xl font-extrabold text-theme-primary rounded-lg p-2 hover:bg-orange-50 transition-colors">
-                Mak LingEr-Coffee
+                ម៉ាក់លីងអ៊័រ-Coffee
             </a>
             <div class="hidden md:flex space-x-6 items-center">
                 <a href="index.html" class="nav-link text-gray-700 hover:text-orange-600 font-semibold transition-colors rounded-lg p-2 hover:bg-orange-50" data-i18n="nav.home">ទំព័រដើម</a>
@@ -98,19 +98,24 @@
                         </button>
                     </div>
                     <div class="space-y-4 text-center">
-                         <button id="payment-qr-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-full w-full sm:w-auto transition-transform hover:scale-105">
-                            <i class="fas fa-qrcode mr-2"></i> <span data-i18n="cart.paymentQR">ទូទាត់តាម QR</span>
-                        </button>
-                        <p class="text-sm text-gray-600 font-semibold" data-i18n="cart.contactOrder">ឬទំនាក់ទំនងទិញតាមរយៈ</p>
+                        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                            <button id="payment-qr-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-full w-full sm:w-auto transition-transform hover:scale-105">
+                                <i class="fas fa-qrcode mr-2"></i> <span data-i18n="cart.paymentQR">ទូទាត់តាម QR</span>
+                            </button>
+                            <button id="send-order-telegram-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-full w-full sm:w-auto transition-transform hover:scale-105">
+                                <i class="fab fa-telegram-plane mr-2"></i> <span data-i18n="cart.sendOrderTelegram">ផ្ញើបញ្ជីទំនិញតាម Telegram</span>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-600 font-semibold pt-4" data-i18n="cart.contactOrder">ឬទំនាក់ទំនងទិញតាមរយៈ</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                            <a href="https://web.facebook.com/MakLingErCoffee" target="_blank" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
+                            <a href="https://web.facebook.com/nangsamphors" target="_blank" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
                                 <i class="fab fa-facebook-f mr-2"></i> Facebook
                             </a>
-                            <a href="https://t.me/MakLingErCoffee" target="_blank" class="flex items-center justify-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
+                            <a href="https://t.me/vongsreysamphors" target="_blank" class="flex items-center justify-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
                                 <i class="fab fa-telegram-plane mr-2"></i> Telegram
                             </a>
-                            <a href="tel:0888467829" class="flex items-center justify-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
-                                <i class="fas fa-phone mr-2"></i> 0888 467 829
+                            <a href="tel:068237990" class="flex items-center justify-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
+                                <i class="fas fa-phone mr-2"></i> 068 237 990
                             </a>
                             <a href="tel:081695138" class="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
                                 <i class="fas fa-phone mr-2"></i> 081 695 138
@@ -134,7 +139,7 @@
     </footer>
 
     <!-- Add to Cart Message Box -->
-    <div id="cartMessageBox" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-lg shadow-xl hidden transition-all duration-300 ease-in-out transform translate-y-4 opacity-0 z-[1000]">
+    <div id="cartMessageBox" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-lg shadow-xl hidden transition-all duration-300 ease-in-out transform translate-y-4 opacity-0 z-[1000] cursor-pointer">
         <i class="fas fa-check-circle mr-2"></i> <span data-i18n="cart.addedToCartMessage">ភេសជ្ជៈត្រូវបានបន្ថែមទៅរទេះហើយ!</span>
     </div>
     
@@ -145,8 +150,8 @@
             <h3 class="text-2xl font-bold mb-2" data-i18n="cart.scanQR">ស្កេនដើម្បីទូទាត់</h3>
             <p class="text-xl font-bold text-theme-primary mb-4" id="qr-total-amount"></p>
             <div id="qr-code-container" class="relative w-full max-w-[250px] aspect-square mx-auto">
-                 <img id="qr-khr" src="Photo\khmer or.jpg" alt="KHQR for KHR" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain">
-                 <img id="qr-usd" src="Photo\usd qr code.jpg" alt="KHQR for USD" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain hidden">
+                 <img id="qr-khr" src="Photo/QR code/khmer or.jpg" alt="KHQR for KHR" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain">
+                 <img id="qr-usd" src="Photo\QR code\usd qr code.jpg" alt="KHQR for USD" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain hidden">
             </div>
              <p class="mt-4 text-gray-600" data-i18n="cart.scanNote">សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។</p>
         </div>
@@ -157,38 +162,38 @@
              km: {
                 nav: { home: 'ទំព័រដើម', products: 'ភេសជ្ជៈ', about: 'អំពីពួកយើង', contact: 'ទំនាក់ទំនង', cart: 'រទេះទំនិញ' },
                 products: { heading: 'មានភេសជ្ជៈដូចជា' },
-                cart: { heading: 'រទេះទំនិញរបស់អ្នក', emptyMessage: 'មិនទាន់មានភេសជ្ជៈនៅក្នុងរទេះទេ។', totalPrice: 'តម្លៃសរុប:', addedToCartMessage: 'បានបន្ថែមទៅរទេះ!', removeButton: 'លុប', normalSize: 'កែវធម្មតា', largeSize: 'កែវធំ', contactOrder: 'ឬទំនាក់ទំនងកម្មង់តាមរយៈ', paymentQR: 'ទូទាត់តាម QR', scanQR: 'ស្កេនដើម្បីទូទាត់', scanNote: 'សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។', switchToUSD: 'ប្តូរទៅជា USD', switchToKHR: 'ប្តូរទៅជា ៛' },
+                cart: { heading: 'រទេះទំនិញរបស់អ្នក', emptyMessage: 'មិនទាន់មានភេសជ្ជៈនៅក្នុងរទេះទេ។', totalPrice: 'តម្លៃសរុប:', addedToCartMessage: 'បានបន្ថែមទៅរទេះ! ចុចដើម្បីមើល', removeButton: 'លុប', normalSize: 'កែវធម្មតា', largeSize: 'កែវធំ', contactOrder: 'ឬទំនាក់ទំនងកម្មង់តាមរយៈ', paymentQR: 'ទូទាត់តាម QR', scanQR: 'ស្កេនដើម្បីទូទាត់', scanNote: 'សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។', switchToUSD: 'ប្តូរទៅជា USD', switchToKHR: 'ប្តូរទៅជា ៛', sendOrderTelegram: 'ផ្ញើបញ្ជីទំនិញតាម Telegram' },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee។ រក្សាសិទ្ធិគ្រប់យ៉ាង។', privacyPolicy: 'គោលការណ៍ឯកជនភាព', termsOfService: 'លក្ខខណ្ឌប្រើប្រាស់' }
             },
             en: {
                 nav: { home: 'Home', products: 'Drinks', about: 'About Us', contact: 'Contact', cart: 'Cart' },
                 products: { heading: 'Our Drinks Selection' },
-                cart: { heading: 'Your Shopping Cart', emptyMessage: 'No drinks in the cart yet.', totalPrice: 'Total Price:', addedToCartMessage: 'Added to cart!', removeButton: 'Remove', normalSize: 'Normal', largeSize: 'Large', contactOrder: 'Or contact to order via', paymentQR: 'Pay with QR', scanQR: 'Scan to Pay', scanNote: 'Please scan this QR code to make a payment.', switchToUSD: 'Switch to USD', switchToKHR: 'Switch to KHR' },
+                cart: { heading: 'Your Shopping Cart', emptyMessage: 'No drinks in the cart yet.', totalPrice: 'Total Price:', addedToCartMessage: 'Added to cart! Click to view', removeButton: 'Remove', normalSize: 'Normal', largeSize: 'Large', contactOrder: 'Or contact to order via', paymentQR: 'Pay with QR', scanQR: 'Scan to Pay', scanNote: 'Please scan this QR code to make a payment.', switchToUSD: 'Switch to USD', switchToKHR: 'Switch to KHR', sendOrderTelegram: 'Send Order via Telegram' },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee. All rights reserved.', privacyPolicy: 'Privacy Policy', termsOfService: 'Terms of Service' }
             },
             zh: {
                 nav: { home: '首页', products: '饮品', about: '关于我们', contact: '联系我们', cart: '购物车' },
                 products: { heading: '我们的饮品' },
-                cart: { heading: '您的购物车', emptyMessage: '购物车中还没有饮品。', totalPrice: '总价:', addedToCartMessage: '已添加到购物车！', removeButton: '删除', normalSize: '普通杯', largeSize: '大杯', contactOrder: '或通过以下方式联系订购', paymentQR: '扫码支付', scanQR: '扫描支付', scanNote: '请扫描此二维码进行付款。', switchToUSD: '切换到美元', switchToKHR: '切换到瑞尔' },
+                cart: { heading: '您的购物车', emptyMessage: '购物车中还没有饮品。', totalPrice: '总价:', addedToCartMessage: '已添加到购物车！点击查看', removeButton: '删除', normalSize: '普通杯', largeSize: '大杯', contactOrder: '或通过以下方式联系订购', paymentQR: '扫码支付', scanQR: '扫描支付', scanNote: '请扫描此二维码进行付款。', switchToUSD: '切换到美元', switchToKHR: '切换到瑞尔', sendOrderTelegram: '通过 Telegram 发送订单' },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee。保留所有权利。', privacyPolicy: '隐私政策', termsOfService: '服务条款' }
             }
         };
 
         const productData = [
-            { id: 1, name: {km: 'កាហ្វេទឹកកក', en: 'Iced Coffee', zh: '冰咖啡'}, img: 'https://placehold.co/600x400/8B4513/FFFFFF?text=Iced+Coffee', price: {normal: 3000, large: 5000} },
-            { id: 2, name: {km: 'កាហ្វេទឹកដោះគោ', en: 'Coffee with Milk', zh: '牛奶咖啡'}, img: 'https://placehold.co/600x400/C8A2C8/FFFFFF?text=Coffee+Milk', price: {normal: 3500, large: 6000} },
-            { id: 3, name: {km: 'តែបៃតង ឡាតេ', en: 'Matcha Latte', zh: '抹茶拿铁'}, img: 'https://placehold.co/600x400/008000/FFFFFF?text=Matcha+Latte', price: {normal: 3000, large: 5000} },
-            { id: 4, name: {km: 'តែមេអំបៅដោះគោ', en: 'Butterfly Pea Tea', zh: '蝶豆花奶茶'}, img: 'https://placehold.co/600x400/5D3FD3/FFFFFF?text=Butterfly+Tea', price: {normal: 4000, large: 6000} },
-            { id: 5, name: {km: 'តែក្រហមក្រូចឆ្មា', en: 'Lemon Red Tea', zh: '红茶柠檬'}, img: 'https://placehold.co/600x400/FF5733/FFFFFF?text=Lemon+Red+Tea', price: {normal: 2000, large: 4000} },
-            { id: 6, name: {km: 'តែបៃតង ទឹកដោះគោ', en: 'Green Milk Tea', zh: '牛奶绿茶'}, img: 'https://placehold.co/600x400/4CAF50/FFFFFF?text=Green+Milk+Tea', price: {normal: 4500, large: 7000} },
-            { id: 7, name: {km: 'ក្រូចច្របាច់', en: 'Squeezed Orange', zh: '鲜榨橙汁'}, img: 'https://placehold.co/600x400/FFA500/FFFFFF?text=Orange+Juice', price: {normal: 2500, large: 4000} },
-            { id: 8, name: {km: 'Brown Sugar', en: 'Brown Sugar', zh: '黑糖奶茶'}, img: 'https://placehold.co/600x400/654321/FFFFFF?text=Brown+Sugar', price: {normal: 4000, large: 6000} },
+            { id: 1, name: {km: 'កាហ្វេទឹកកក', en: 'Iced Coffee', zh: '冰咖啡'}, img: 'Photo/drink/1.jpg', price: {normal: 3000, large: 5000} },
+            { id: 2, name: {km: 'កាហ្វេទឹកដោះគោ', en: 'Coffee with Milk', zh: '牛奶咖啡'}, img: 'Photo/drink/2.jpg', price: {normal: 3000, large: 5000} },
+            { id: 3, name: {km: 'តែបៃតង ឡាតេ', en: 'Matcha Latte', zh: '抹茶拿铁'}, img: 'Photo/drink/matcha.jpg', price: {normal: 4000, large: 6000} },
+            { id: 4, name: {km: 'តែមេអំបៅដោះគោ', en: 'Butterfly Pea Tea', zh: '蝶豆花奶茶'}, img: 'Photo/drink/4.jpg', price: {normal: 3000, large: 5000} },
+            { id: 5, name: {km: 'តែក្រូចឆ្មា', en: 'Lemon Red Tea', zh: '红茶柠檬'}, img: 'Photo/drink/10.jpg', price: {normal: 3000, large: 5000} },
+            { id: 6, name: {km: 'តែបៃតង ទឹកដោះគោ', en: 'Green Milk Tea', zh: '牛奶绿茶'}, img: 'Photo/drink/9.jpg', price: {normal: 3000, large: 5000} },
+            { id: 7, name: {km: 'ក្រូចច្របាច់', en: 'Squeezed Orange', zh: '鲜榨橙汁'}, img: '', price: {normal: 2500, large: 4000} },
+            { id: 8, name: {km: 'Brown Sugar', en: 'Brown Sugar', zh: '黑糖奶茶'}, img: 'https://images.unsplash.com/photo-1618600557523-c276f8a37122?q=80&w=400&auto=format&fit=crop', price: {normal: 4000, large: 6000} },
         ];
 
         let currentLang = localStorage.getItem('language') || 'km';
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let currentCurrency = 'khr'; // 'khr' or 'usd'
-        const KHR_TO_USD_RATE = 4100;
+        const KHR_TO_USD_RATE = 4000;
 
         // --- TRANSLATION & UTILITIES ---
          function getTranslation(key, lang = currentLang) {
@@ -245,7 +250,7 @@
                 card.className = 'product-card bg-white p-5 rounded-xl shadow-lg border text-center';
                 card.dataset.productId = p.id;
                 card.innerHTML = `
-                    <img src="${p.img}" alt="${p.name[currentLang]}" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <img src="${p.img}" alt="${p.name[currentLang]}" class="w-full h-80 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x600/CCCCCC/FFFFFF?text=Image+Not+Found';">
                     <h3 class="text-xl font-bold mb-2">${p.name[currentLang]}</h3>
                     <div class="space-y-2 mt-4">
                         <button onclick="addToCart(${p.id}, 'normal')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2.5 px-5 rounded-full w-full">${getTranslation('cart.normalSize')} - ${normalPriceDisplay}</button>
@@ -334,7 +339,7 @@
                     itemEl.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm border gap-2';
                     itemEl.innerHTML = `
                         <div class="flex items-center gap-3 flex-grow">
-                            <img src="${item.img}" alt="${item.name[currentLang]}" class="w-16 h-16 object-cover rounded-md border flex-shrink-0">
+                            <img src="${item.img}" alt="${item.name[currentLang]}" class="w-16 h-16 object-cover rounded-md border flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Error';">
                             <div class="min-w-0">
                                 <h4 class="font-semibold truncate">${item.name[currentLang]} <span class="text-sm text-gray-500">(${getTranslation('cart.'+item.size+'Size')})</span></h4>
                                 <p class="text-gray-600 font-bold">${itemPriceDisplay}</p>
@@ -353,7 +358,6 @@
                 });
                 totalEl.textContent = formatPrice(totalKhr);
 
-                // Update currency toggle button text
                 const currencyBtnText = document.querySelector('#currency-toggle-btn span');
                 if (currencyBtnText) {
                     currencyBtnText.innerHTML = (currentCurrency === 'khr') ? getTranslation('cart.switchToUSD') : getTranslation('cart.switchToKHR');
@@ -366,19 +370,42 @@
             msgBox.classList.remove('hidden', 'translate-y-4', 'opacity-0');
             setTimeout(() => {
                 msgBox.classList.add('translate-y-4', 'opacity-0');
-                setTimeout(() => msgBox.classList.add('hidden'), 300);
+                setTimeout(() => msgBox.classList.add('hidden'), 3000); 
             }, 2000);
         }
 
-        // --- UI & EVENT LISTENERS ---
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
             document.body.classList.toggle('overflow-hidden');
         }
+
+        function sendOrderToTelegram() {
+            if (cart.length === 0) return;
+
+            const telegramUsername = 'vongsreysamphors';
+            let message = 'សួស្តី! ខ្ញុំចង់ធ្វើការកម្ម៉ង់៖\n\n';
+            
+            let totalKhr = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                totalKhr += itemTotal;
+                const itemPriceInCurrentCurrency = formatPrice(itemTotal);
+                const itemName = item.name[currentLang] || item.name['km'];
+                const itemSize = getTranslation('cart.' + item.size + 'Size');
+
+                message += `- ${itemName} (${itemSize}) x ${item.quantity} = ${itemPriceInCurrentCurrency}\n`;
+            });
+
+            const totalPriceInCurrentCurrency = formatPrice(totalKhr);
+            message += `\n*សរុបតម្លៃ៖ ${totalPriceInCurrentCurrency}*`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const url = `https://t.me/${telegramUsername}?text=${encodedMessage}`;
+            window.open(url, '_blank');
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
-            // Nav
             document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
             document.getElementById('close-mobile-menu').addEventListener('click', toggleMobileMenu);
             document.querySelectorAll('#mobile-menu a').forEach(link => link.addEventListener('click', toggleMobileMenu));
@@ -386,14 +413,12 @@
                 button.addEventListener('click', () => setLanguage(button.dataset.lang));
             });
             
-            // Currency Toggle
             document.getElementById('currency-toggle-btn').addEventListener('click', () => {
                 currentCurrency = (currentCurrency === 'khr') ? 'usd' : 'khr';
                 renderProducts();
                 updateCartDisplay();
             });
 
-            // QR Modal
             const qrModal = document.getElementById('qrModal');
             document.getElementById('payment-qr-btn').addEventListener('click', () => {
                 const totalKhr = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -414,9 +439,18 @@
             document.getElementById('closeQrModal').addEventListener('click', () => qrModal.style.display = 'none');
             qrModal.addEventListener('click', (e) => { if (e.target === qrModal) qrModal.style.display = 'none'; });
             
-            // Initial Load
+            const cartMessageBox = document.getElementById('cartMessageBox');
+            cartMessageBox.addEventListener('click', () => {
+                document.getElementById('cart-section').scrollIntoView({ behavior: 'smooth' });
+                cartMessageBox.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => cartMessageBox.classList.add('hidden'), 300);
+            });
+
+            document.getElementById('send-order-telegram-btn').addEventListener('click', sendOrderToTelegram);
+
             setLanguage(currentLang);
         });
     </script>
 </body>
 </html>
+
