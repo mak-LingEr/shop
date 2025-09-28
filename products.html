@@ -72,7 +72,15 @@
        <section id="products" class="py-16 px-4">
             <div class="container mx-auto text-center">
                 <h2 class="text-4xl font-bold mb-12" data-i18n="products.heading">មានភេសជ្ជៈដូចជា</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                
+                <!-- ស្វែងរកភេសជ្ជៈ Search Input -->
+                <div class="mb-10 max-w-lg mx-auto">
+                    <input type="text" id="product-search" placeholder="ស្វែងរកភេសជ្ជៈ..." data-i18n-placeholder="products.searchPlaceholder" class="w-full p-3 border-2 border-gray-300 rounded-full shadow-inner focus:outline-none focus:border-theme-primary transition-all font-semibold text-lg text-center">
+                </div>
+                <!-- បញ្ចប់ស្វែងរកភេសជ្ជៈ -->
+
+                <!-- កែសម្រួល៖ ប្រើ grid-cols-2 ជាលំនាំដើមសម្រាប់ mobile -->
+                <div id="product-grid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
                     <!-- Products will be dynamically inserted here -->
                 </div>
             </div>
@@ -150,30 +158,42 @@
             <h3 class="text-2xl font-bold mb-2" data-i18n="cart.scanQR">ស្កេនដើម្បីទូទាត់</h3>
             <p class="text-xl font-bold text-theme-primary mb-4" id="qr-total-amount"></p>
             <div id="qr-code-container" class="relative w-full max-w-[250px] aspect-square mx-auto">
-                 <img id="qr-khr" src="Photo/QR code/khmer or.jpg" alt="KHQR for KHR" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain">
-                 <img id="qr-usd" src="Photo\QR code\usd qr code.jpg" alt="KHQR for USD" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain hidden">
+                <img id="qr-khr" src="Photo/QR code/khmer or.jpg" alt="KHQR for KHR" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain">
+                <img id="qr-usd" src="Photo\QR code\usd qr code.jpg" alt="KHQR for USD" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain hidden">
             </div>
-             <p class="mt-4 text-gray-600" data-i18n="cart.scanNote">សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។</p>
+            <p class="mt-4 text-gray-600" data-i18n="cart.scanNote">សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។</p>
         </div>
     </div>
 
     <script>
         const translations = {
-             km: {
+            km: {
                 nav: { home: 'ទំព័រដើម', products: 'ភេសជ្ជៈ', about: 'អំពីពួកយើង', contact: 'ទំនាក់ទំនង', cart: 'រទេះទំនិញ' },
-                products: { heading: 'មានភេសជ្ជៈដូចជា' },
+                products: { 
+                    heading: 'មានភេសជ្ជៈដូចជា', 
+                    searchPlaceholder: 'ស្វែងរកភេសជ្ជៈ...', // New translation
+                    noResults: 'រកមិនឃើញភេសជ្ជៈណាត្រូវនឹងការស្វែងរករបស់អ្នកទេ។' // New translation
+                },
                 cart: { heading: 'រទេះទំនិញរបស់អ្នក', emptyMessage: 'មិនទាន់មានភេសជ្ជៈនៅក្នុងរទេះទេ។', totalPrice: 'តម្លៃសរុប:', addedToCartMessage: 'បានបន្ថែមទៅរទេះ! ចុចដើម្បីមើល', removeButton: 'លុប', normalSize: 'កែវធម្មតា', largeSize: 'កែវធំ', contactOrder: 'ឬទំនាក់ទំនងកម្មង់តាមរយៈ', paymentQR: 'ទូទាត់តាម QR', scanQR: 'ស្កេនដើម្បីទូទាត់', scanNote: 'សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។', switchToUSD: 'ប្តូរទៅជា USD', switchToKHR: 'ប្តូរទៅជា ៛', sendOrderTelegram: 'ផ្ញើបញ្ជីទំនិញតាម Telegram' },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee។ រក្សាសិទ្ធិគ្រប់យ៉ាង។', privacyPolicy: 'គោលការណ៍ឯកជនភាព', termsOfService: 'លក្ខខណ្ឌប្រើប្រាស់' }
             },
             en: {
                 nav: { home: 'Home', products: 'Drinks', about: 'About Us', contact: 'Contact', cart: 'Cart' },
-                products: { heading: 'Our Drinks Selection' },
+                products: { 
+                    heading: 'Our Drinks Selection',
+                    searchPlaceholder: 'Search Drinks...', // New translation
+                    noResults: 'No drinks found matching your search.' // New translation
+                },
                 cart: { heading: 'Your Shopping Cart', emptyMessage: 'No drinks in the cart yet.', totalPrice: 'Total Price:', addedToCartMessage: 'Added to cart! Click to view', removeButton: 'Remove', normalSize: 'Normal', largeSize: 'Large', contactOrder: 'Or contact to order via', paymentQR: 'Pay with QR', scanQR: 'Scan to Pay', scanNote: 'Please scan this QR code to make a payment.', switchToUSD: 'Switch to USD', switchToKHR: 'Switch to KHR', sendOrderTelegram: 'Send Order via Telegram' },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee. All rights reserved.', privacyPolicy: 'Privacy Policy', termsOfService: 'Terms of Service' }
             },
             zh: {
                 nav: { home: '首页', products: '饮品', about: '关于我们', contact: '联系我们', cart: '购物车' },
-                products: { heading: '我们的饮品' },
+                products: { 
+                    heading: '我们的饮品',
+                    searchPlaceholder: '搜索饮品...', // New translation
+                    noResults: '未找到符合您搜索条件的饮品。' // New translation
+                },
                 cart: { heading: '您的购物车', emptyMessage: '购物车中还没有饮品。', totalPrice: '总价:', addedToCartMessage: '已添加到购物车！点击查看', removeButton: '删除', normalSize: '普通杯', largeSize: '大杯', contactOrder: '或通过以下方式联系订购', paymentQR: '扫码支付', scanQR: '扫描支付', scanNote: '请扫描此二维码进行付款。', switchToUSD: '切换到美元', switchToKHR: '切换到瑞尔', sendOrderTelegram: '通过 Telegram 发送订单' },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee。保留所有权利。', privacyPolicy: '隐私政策', termsOfService: '服务条款' }
             }
@@ -187,7 +207,7 @@
             { id: 5, name: {km: 'តែក្រូចឆ្មា', en: 'Lemon Red Tea', zh: '红茶柠檬'}, img: 'Photo/drink/10.jpg', price: {normal: 3000, large: 5000} },
             { id: 6, name: {km: 'តែបៃតង ទឹកដោះគោ', en: 'Green Milk Tea', zh: '牛奶绿茶'}, img: 'Photo/drink/9.jpg', price: {normal: 3000, large: 5000} },
             { id: 7, name: {km: 'ផាសិនសូដា', en: 'Passion Fruit Soda', zh: '百香果苏打'}, img: 'Photo/drink/6.jpg', price: {normal: 3000, large: 5000} },
-            { id: 8, name: {km: 'Brown Sugar', en: 'Brown Sugar', zh: '黑糖奶茶'}, img: 'Photo/drink/Br.jpg', price: {normal: 3000, large: 5000} },
+            { id: 8, name: {km: 'ប្រោនស៊ូហ្គឺ', en: 'Brown Sugar', zh: '黑糖奶茶'}, img: 'Photo/drink/Br.jpg', price: {normal: 3000, large: 5000} },
         ];
 
         let currentLang = localStorage.getItem('language') || 'km';
@@ -196,7 +216,7 @@
         const KHR_TO_USD_RATE = 4000;
 
         // --- TRANSLATION & UTILITIES ---
-         function getTranslation(key, lang = currentLang) {
+          function getTranslation(key, lang = currentLang) {
             return key.split('.').reduce((o, i) => o?.[i], translations[lang]) || key;
         }
         
@@ -208,8 +228,17 @@
                 const text = getTranslation(el.dataset.i18n, lang);
                 if (text) el.innerHTML = text;
             });
+
+            // Handle placeholders for search input
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;
+                const text = getTranslation(key, lang);
+                if (text) el.placeholder = text;
+            });
+
             updateLanguageButtons();
-            renderProducts();
+            const searchTerm = document.getElementById('product-search')?.value || '';
+            renderProducts(searchTerm);
             updateCartDisplay();
         }
 
@@ -238,30 +267,53 @@
             }
         }
 
-        // --- PRODUCT RENDERING ---
-        function renderProducts() {
-            const productContainer = document.querySelector('#products .grid');
+        // --- PRODUCT RENDERING & FILTERING ---
+        function renderProducts(filterTerm = '') {
+            const productContainer = document.getElementById('product-grid');
             if (!productContainer) return;
             productContainer.innerHTML = '';
-            productData.forEach(p => {
+            
+            const lowerCaseFilter = filterTerm.toLowerCase();
+
+            const filteredProducts = productData.filter(p => {
+                // Check name in current language and Khmer (as fallback) for match
+                const nameInCurrentLang = p.name[currentLang] || p.name['km'];
+                return nameInCurrentLang.toLowerCase().includes(lowerCaseFilter);
+            });
+
+            if (filteredProducts.length === 0 && filterTerm.length > 0) {
+                // Display a message if no products match the search
+                // Use col-span-2 to ensure it spans across the two mobile columns
+                productContainer.innerHTML = `<p class="col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-4 text-xl text-gray-500 mt-8">${getTranslation('products.noResults')}</p>`;
+                return;
+            }
+
+            filteredProducts.forEach(p => {
                 const normalPriceDisplay = formatPrice(p.price.normal);
                 const largePriceDisplay = formatPrice(p.price.large);
                 const card = document.createElement('div');
-                card.className = 'product-card bg-white p-5 rounded-xl shadow-lg border text-center';
+                card.className = 'product-card bg-white p-3 sm:p-5 rounded-xl shadow-lg border text-center';
                 card.dataset.productId = p.id;
                 card.innerHTML = `
-                    <img src="${p.img}" alt="${p.name[currentLang]}" class="w-full h-80 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x600/CCCCCC/FFFFFF?text=Image+Not+Found';">
-                    <h3 class="text-xl font-bold mb-2">${p.name[currentLang]}</h3>
+                    <!-- h-64 applied for compact two-column mobile layout -->
+                    <img src="${p.img}" alt="${p.name[currentLang]}" class="w-full h-64 sm:h-80 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x600/CCCCCC/FFFFFF?text=Image+Not+Found';">
+                    <h3 class="text-lg sm:text-xl font-bold mb-2">${p.name[currentLang]}</h3>
                     <div class="space-y-2 mt-4">
-                        <button onclick="addToCart(${p.id}, 'normal')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2.5 px-5 rounded-full w-full">${getTranslation('cart.normalSize')} - ${normalPriceDisplay}</button>
-                        <button onclick="addToCart(${p.id}, 'large')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2.5 px-5 rounded-full w-full">${getTranslation('cart.largeSize')} - ${largePriceDisplay}</button>
+                        <button onclick="addToCart(${p.id}, 'normal')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm sm:py-2.5 sm:px-5 rounded-full w-full">${getTranslation('cart.normalSize')} - ${normalPriceDisplay}</button>
+                        <button onclick="addToCart(${p.id}, 'large')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm sm:py-2.5 sm:px-5 rounded-full w-full">${getTranslation('cart.largeSize')} - ${largePriceDisplay}</button>
                     </div>
                 `;
                 productContainer.appendChild(card);
             });
         }
 
-        // --- CART LOGIC ---
+        function handleProductSearch() {
+            const searchTerm = document.getElementById('product-search').value;
+            renderProducts(searchTerm);
+        }
+
+        // --- CART LOGIC (No changes needed here, keeping for completeness) ---
+
         function addToCart(productId, size) {
             const product = productData.find(p => p.id === productId);
             const cartId = `${productId}-${size}`;
@@ -383,8 +435,8 @@
         function sendOrderToTelegram() {
             if (cart.length === 0) return;
 
-            const telegramUsername = 'vongsreysamphors';
-            let message = 'សួស្តី! ខ្ញុំចង់ធ្វើការកម្ម៉ង់៖\n\n';
+            const telegramUsername = 'maklinger';
+            let message = 'សួស្តី!👋 ខ្ញុំចង់កម្ម៉ង់ភេសជ្ជៈខាងក្រោម៖👇\n\n';
             
             let totalKhr = 0;
             cart.forEach(item => {
@@ -415,7 +467,8 @@
             
             document.getElementById('currency-toggle-btn').addEventListener('click', () => {
                 currentCurrency = (currentCurrency === 'khr') ? 'usd' : 'khr';
-                renderProducts();
+                const searchTerm = document.getElementById('product-search')?.value || '';
+                renderProducts(searchTerm);
                 updateCartDisplay();
             });
 
@@ -447,10 +500,12 @@
             });
 
             document.getElementById('send-order-telegram-btn').addEventListener('click', sendOrderToTelegram);
+            
+            // New Search Listener
+            document.getElementById('product-search').addEventListener('input', handleProductSearch);
 
             setLanguage(currentLang);
         });
     </script>
 </body>
 </html>
-
