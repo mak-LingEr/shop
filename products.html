@@ -21,10 +21,15 @@
         .hover\:bg-theme-primary-dark:hover { background-color: #B45309; }
         .border-theme-primary { border-color: #D97706; }
         .ring-theme-primary { --tw-ring-color: #D97706; }
-        #products .product-card { transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; }
-        #products .product-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        /* Apply transform on hover only to non-scrolling items (desktop view) */
+        #product-grid:not(.flex) .product-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
         .add-to-cart-btn { transition: all 0.2s ease-in-out; }
         .add-to-cart-btn:hover { transform: scale(1.05); }
+
+        /* Custom scrollbar for subtle look on desktop, standard on mobile */
+        #product-grid::-webkit-scrollbar { height: 8px; }
+        #product-grid::-webkit-scrollbar-thumb { background-color: #D97706; border-radius: 4px; }
+        #product-grid::-webkit-scrollbar-track { background: #f1f1f1; }
     </style>
 </head>
 <body>
@@ -79,8 +84,9 @@
                 </div>
                 <!-- បញ្ចប់ស្វែងរកភេសជ្ជៈ -->
 
-                <!-- កែសម្រួល៖ ប្រើ grid-cols-2 ជាលំនាំដើមសម្រាប់ mobile -->
-                <div id="product-grid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
+                <!-- កែសម្រួល៖ ប្រើ flex សម្រាប់ horizontal scroll on mobile, grid សម្រាប់ desktop -->
+                <!-- Note: The rendering script dynamically decides if it's a grid (large screen) or flex (small screen) if the filter is empty. For simplicity and mobile-first approach, we'll keep the JS logic driving the layout based on `renderProducts`. The original grid classes are removed here. -->
+                <div id="product-grid" class="flex overflow-x-auto space-x-4 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-8 justify-start md:justify-center">
                     <!-- Products will be dynamically inserted here -->
                 </div>
             </div>
@@ -278,25 +284,58 @@
             const filteredProducts = productData.filter(p => {
                 // Check name in current language and Khmer (as fallback) for match
                 const nameInCurrentLang = p.name[currentLang] || p.name['km'];
-                return nameInCurrentLang.toLowerCase().includes(lowerCaseFilter);
+                // Check name in English
+                const nameInEn = p.name['en'] || '';
+                // Check name in Chinese
+                const nameInZh = p.name['zh'] || '';
+                
+                return nameInCurrentLang.toLowerCase().includes(lowerCaseFilter) ||
+                       nameInEn.toLowerCase().includes(lowerCaseFilter) ||
+                       nameInZh.toLowerCase().includes(lowerCaseFilter);
             });
 
             if (filteredProducts.length === 0 && filterTerm.length > 0) {
                 // Display a message if no products match the search
-                // Use col-span-2 to ensure it spans across the two mobile columns
-                productContainer.innerHTML = `<p class="col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-4 text-xl text-gray-500 mt-8">${getTranslation('products.noResults')}</p>`;
+                // Use w-full for the message in the flex container
+                productContainer.innerHTML = `<p class="w-full text-xl text-gray-500 mt-8">${getTranslation('products.noResults')}</p>`;
                 return;
             }
+            
+            // If there is no filter, ensure it uses the scrollable layout on mobile and grid on desktop
+            // If a filter is active, it should use the flex layout for consistent scroll behavior regardless of screen size.
+
+            // Reset classes based on filter status (If no filter is active, we use the original responsive classes)
+            if (filterTerm === '') {
+                 // Flex for mobile, Grid for medium/large screens (no filter)
+                productContainer.className = 'flex overflow-x-auto space-x-4 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-8 justify-start md:justify-center';
+            } else {
+                 // Always use flex layout for filtered results, even on desktop
+                 productContainer.className = 'flex overflow-x-auto space-x-4 pb-4 w-full';
+            }
+
 
             filteredProducts.forEach(p => {
                 const normalPriceDisplay = formatPrice(p.price.normal);
                 const largePriceDisplay = formatPrice(p.price.large);
                 const card = document.createElement('div');
-                card.className = 'product-card bg-white p-3 sm:p-5 rounded-xl shadow-lg border text-center';
+                
+                // Card class: w-52 (fixed width for horizontal scroll) and flex-shrink-0 (required for horizontal scroll).
+                // On medium/large screens (md:w-auto), let the grid handle the width if no filter is active.
+                let cardClasses = 'product-card bg-white p-3 sm:p-5 rounded-xl shadow-lg border text-center flex-shrink-0 w-52 sm:w-64 md:w-auto';
+                
+                if (filterTerm !== '') {
+                    // If filtering, we still treat it as a single row, but use a grid-like width
+                    cardClasses = 'product-card bg-white p-3 sm:p-5 rounded-xl shadow-lg border text-center flex-shrink-0 w-52 sm:w-64'; 
+                } else if (window.innerWidth >= 768) { 
+                    // On desktop/tablet without filter, let it flow naturally in the grid columns defined in HTML
+                    cardClasses = 'product-card bg-white p-3 sm:p-5 rounded-xl shadow-lg border text-center';
+                }
+
+                card.className = cardClasses;
                 card.dataset.productId = p.id;
                 card.innerHTML = `
-                    <!-- h-64 applied for compact two-column mobile layout -->
-                    <img src="${p.img}" alt="${p.name[currentLang]}" class="w-full h-64 sm:h-80 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x600/CCCCCC/FFFFFF?text=Image+Not+Found';">
+                    <!-- Reduced image height for a more compact mobile card size -->
+                    <img src="${p.img}" alt="${p.name[currentLang]}" class="w-full h-40 sm:h-56 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x600/CCCCCC/FFFFFF?text=Image+Not+Found';">
                     <h3 class="text-lg sm:text-xl font-bold mb-2">${p.name[currentLang]}</h3>
                     <div class="space-y-2 mt-4">
                         <button onclick="addToCart(${p.id}, 'normal')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm sm:py-2.5 sm:px-5 rounded-full w-full">${getTranslation('cart.normalSize')} - ${normalPriceDisplay}</button>
