@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mak LingEr-Coffee - ភេសជ្ជៈ</title>
+    <title data-i18n="pageTitle">Mak LingEr-Coffee - ភេសជ្ជៈ & ប្រភេទ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -21,34 +21,23 @@
         .hover\:bg-theme-primary-dark:hover { background-color: #B45309; }
         .border-theme-primary { border-color: #D97706; }
         .ring-theme-primary { --tw-ring-color: #D97706; }
+
+        /* Product Card effects */
+        .product-card {
+            transition: all 0.3s ease-in-out;
+            border: 1px solid #F3E8D9;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
         .add-to-cart-btn { transition: all 0.2s ease-in-out; }
         .add-to-cart-btn:hover { transform: scale(1.05); }
 
         /* Custom scrollbar for subtle look on desktop, standard on mobile */
-        .horizontal-scroll-container {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
-        }
-        .horizontal-scroll-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        .horizontal-scroll-container::-webkit-scrollbar-thumb {
-            background-color: #D97706;
-            border-radius: 4px;
-        }
-        .horizontal-scroll-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        /* Ensure hover effect only applies to non-scrolling grid items (desktop/filtered view) */
-        .product-card:hover { 
-            transform: none; 
-            box-shadow: none; 
-        }
-        .md\:grid .product-card:hover {
-            transform: translateY(-8px); 
-            box-shadow: 0 12px 25px rgba(0,0,0,0.1); 
-        }
+        .product-row-scroll::-webkit-scrollbar { height: 8px; }
+        .product-row-scroll::-webkit-scrollbar-thumb { background-color: #D97706; border-radius: 4px; }
+        .product-row-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
     </style>
 </head>
 <body>
@@ -93,7 +82,7 @@
     </div>
     
     <main>
-       <section id="products" class="py-16 px-4">
+       <section id="products-list" class="py-16 px-4">
             <div class="container mx-auto text-center">
                 <h2 class="text-4xl font-bold mb-12" data-i18n="products.heading">☕ប្រភេទភេសជ្ជៈ🥤</h2>
                 
@@ -103,9 +92,9 @@
                 </div>
                 <!-- បញ្ចប់ស្វែងរកភេសជ្ជៈ -->
 
-                <!-- ធាតុនេះនឹងផ្ទុកមាតិកាផលិតផលទាំងអស់ (តាមប្រភេទ ឬលទ្ធផលស្វែងរក) -->
-                <div id="product-content-area" class="space-y-12">
-                    <!-- Products will be dynamically inserted here by renderProducts function -->
+                <!-- Product Categories Container (Will be filled by JS) -->
+                <div id="product-categories-container" class="space-y-12">
+                    <!-- Categories or Filtered Results will be dynamically inserted here -->
                 </div>
             </div>
         </section>
@@ -192,6 +181,7 @@
     <script>
         const translations = {
             km: {
+                pageTitle: 'Mak LingEr-Coffee - ភេសជ្ជៈ & ប្រភេទ',
                 nav: { home: 'ទំព័រដើម', products: 'ភេសជ្ជៈ', about: 'អំពីពួកយើង', contact: 'ទំនាក់ទំនង', cart: 'រទេះទំនិញ' },
                 products: { 
                     heading: '☕ប្រភេទភេសជ្ជៈ🥤', 
@@ -199,10 +189,9 @@
                     noResults: 'រកមិនឃើញភេសជ្ជៈណាត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
                     categories: {
                         coffee: 'ប្រភេទកាហ្វេ',
-                        milk_tea: 'តែទឹកដោះគោ & ពិសេស',
-                        fruit_soda: 'ក្រូច/ផ្លែឈើ & សូដា',
-                        canned_soft: 'ភេសជ្ជៈកំប៉ុង',
-                        bottled_water: 'ភេសជ្ជៈដប',
+                        tea: 'ប្រភេទតែ/ឡាតេ',
+                        soda: 'ប្រភេទទឹកផ្លែឈើ/សូដា',
+                        canned_bottled: 'ភេសជ្ជៈកំប៉ុង/ដប',
                         beer: 'ប្រភេទស្រាបៀរ'
                     }
                 },
@@ -213,9 +202,8 @@
                     addedToCartMessage: 'បានបន្ថែមទៅរទេះ! ចុចដើម្បីមើល', 
                     removeButton: 'លុប', 
                     normalSize: 'កែវធម្មតា', 
-                    largeSize: 'កែវធំ',
-                    unitCan: '1 កំប៉ុង', // NEW
-                    unitBottle: '1 ដប', // NEW
+                    largeSize: 'កែវធំ', 
+                    fixedSize: 'មួយកំប៉ុង/ដប', // New translation for fixed size
                     contactOrder: 'ឬទំនាក់ទំនងកម្មង់តាមរយៈ', 
                     paymentQR: 'ទូទាត់តាម QR', 
                     scanQR: 'ស្កេនដើម្បីទូទាត់', 
@@ -227,6 +215,7 @@
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee។ រក្សាសិទ្ធិគ្រប់យ៉ាង។', privacyPolicy: 'គោលការណ៍ឯកជនភាព', termsOfService: 'លក្ខខណ្ឌប្រើប្រាស់' }
             },
             en: {
+                pageTitle: 'Mak LingEr-Coffee - Drinks & Categories',
                 nav: { home: 'Home', products: 'Drinks', about: 'About Us', contact: 'Contact', cart: 'Cart' },
                 products: { 
                     heading: '☕Our Drinks🍹',
@@ -234,10 +223,9 @@
                     noResults: 'No drinks found matching your search.',
                     categories: {
                         coffee: 'Coffee',
-                        milk_tea: 'Milk Tea & Specialty',
-                        fruit_soda: 'Lemon/Fruit & Soda',
-                        canned_soft: 'Canned Soft Drinks',
-                        bottled_water: 'Bottled Drinks',
+                        tea: 'Tea / Latte',
+                        soda: 'Fruit / Soda',
+                        canned_bottled: 'Canned / Bottled Drinks',
                         beer: 'Beer'
                     }
                 },
@@ -248,9 +236,8 @@
                     addedToCartMessage: 'Added to cart! Click to view', 
                     removeButton: 'Remove', 
                     normalSize: 'Normal', 
-                    largeSize: 'Large',
-                    unitCan: '1 Can', // NEW
-                    unitBottle: '1 Bottle', // NEW
+                    largeSize: 'Large', 
+                    fixedSize: 'Can / Bottle', // New translation for fixed size
                     contactOrder: 'Or contact to order via', 
                     paymentQR: 'Pay with QR', 
                     scanQR: 'Scan to Pay', 
@@ -262,18 +249,18 @@
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee. All rights reserved.', privacyPolicy: 'Privacy Policy', termsOfService: 'Terms of Service' }
             },
             zh: {
+                pageTitle: 'Mak LingEr-Coffee - 饮品与分类',
                 nav: { home: '首页', products: '饮品', about: '关于我们', contact: '联系我们', cart: '购物车' },
                 products: { 
                     heading: '🥤我们的饮品🍹',
                     searchPlaceholder: '搜索饮品...',
                     noResults: '未找到符合您搜索条件的饮品。',
                     categories: {
-                        coffee: '咖啡类',
-                        milk_tea: '奶茶和特色饮品',
-                        fruit_soda: '柠檬/水果和苏打',
-                        canned_soft: '罐装饮料',
-                        bottled_water: '瓶装饮料',
-                        beer: '啤酒类'
+                        coffee: '咖啡系列',
+                        tea: '茶类 / 拿铁',
+                        soda: '水果 / 苏打',
+                        canned_bottled: '罐装 / 瓶装饮品',
+                        beer: '啤酒'
                     }
                 },
                 cart: { 
@@ -283,9 +270,8 @@
                     addedToCartMessage: '已添加到购物车！点击查看', 
                     removeButton: '删除', 
                     normalSize: '普通杯', 
-                    largeSize: '大杯',
-                    unitCan: '1 罐', // NEW
-                    unitBottle: '1 瓶', // NEW
+                    largeSize: '大杯', 
+                    fixedSize: '罐装/瓶装', // New translation for fixed size
                     contactOrder: '或通过以下方式联系订购', 
                     paymentQR: '扫码支付', 
                     scanQR: '扫描支付', 
@@ -299,32 +285,24 @@
         };
 
         const productData = [
-            // --- Coffee Category ---
-            { id: 1, name: {km: 'កាហ្វេទឹកកក', en: 'Iced Coffee', zh: '冰咖啡'}, category: 'coffee', img: 'Photo/drink/1.jpg', price: {normal: 3000, large: 5000} },
-            { id: 2, name: {km: 'កាហ្វេទឹកដោះគោ', en: 'Coffee with Milk', zh: '牛奶咖啡'}, category: 'coffee', img: 'Photo/drink/2.jpg', price: {normal: 3000, large: 5000} },
-            
-            // --- Milk Tea/Specialty Category ---
-            { id: 3, name: {km: 'តែបៃតង ឡាតេ', en: 'Matcha Latte', zh: '抹茶拿铁'}, category: 'milk_tea', img: 'Photo/drink/matcha.jpg', price: {normal: 4000, large: 6000} },
-            { id: 6, name: {km: 'តែបៃតង ទឹកដោះគោ', en: 'Green Milk Tea', zh: '牛奶绿茶'}, category: 'milk_tea', img: 'Photo/drink/9.jpg', price: {normal: 3000, large: 5000} },
-            { id: 4, name: {km: 'តែមេអំបៅដោះគោ', en: 'Butterfly Pea Tea', zh: '蝶豆花奶茶'}, category: 'milk_tea', img: 'Photo/drink/4.jpg', price: {normal: 3000, large: 5000} },
-            { id: 8, name: {km: 'ប្រោនស៊ូហ្គឺ', en: 'Brown Sugar', zh: '黑糖奶茶'}, category: 'milk_tea', img: 'Photo/drink/Br.jpg', price: {normal: 3000, large: 5000} },
-            
-            // --- Fruit/Soda Category ---
-            { id: 5, name: {km: 'តែក្រូចឆ្មា', en: 'Lemon Red Tea', zh: '红茶柠檬'}, category: 'fruit_soda', img: 'Photo/drink/10.jpg', price: {normal: 3000, large: 5000} },
-            { id: 7, name: {km: 'ផាសិនសូដា', en: 'Passion Fruit Soda', zh: '百香果苏打'}, category: 'fruit_soda', img: 'Photo/drink/6.jpg', price: {normal: 3000, large: 5000} },
-            
-            // --- Canned Soft Drinks Category ---
-            { id: 9, name: {km: 'កូកា-កូឡា (កំប៉ុង)', en: 'Coca-Cola (Can)', zh: '可口可乐 (罐)'}, category: 'canned_soft', img: 'https://placehold.co/400x600/EF3237/FFFFFF?text=Coke', price: {normal: 2500, large: 0} },
-            
-            // --- Beer Category ---
-            { id: 10, name: {km: 'ស្រាបៀរអង្គរ (កំប៉ុង)', en: 'Angkor Beer (Can)', zh: '吴哥啤酒 (罐)'}, category: 'beer', img: 'https://placehold.co/400x600/FFD700/000000?text=Angkor+Beer', price: {normal: 4000, large: 0} },
-            
-            // --- Bottled Water Category ---
-            { id: 11, name: {km: 'ទឹកសុទ្ធ អាប៊ូ', en: 'AQUA Water (Bottle)', zh: '矿泉水 (瓶)'}, category: 'bottled_water', img: 'https://placehold.co/400x600/ADD8E6/000000?text=AQUA+Water', price: {normal: 1000, large: 0} },
+            // Coffee
+            { id: 1, category: 'coffee', name: {km: 'កាហ្វេទឹកកក', en: 'Iced Coffee', zh: '冰咖啡'}, img: 'Photo/drink/1.jpg', price: {normal: 3000, large: 5000} },
+            { id: 2, category: 'coffee', name: {km: 'កាហ្វេទឹកដោះគោ', en: 'Coffee with Milk', zh: '牛奶咖啡'}, img: 'Photo/drink/2.jpg', price: {normal: 3000, large: 5000} },
+            // Tea / Latte
+            { id: 3, category: 'tea', name: {km: 'តែបៃតង ឡាតេ', en: 'Matcha Latte', zh: '抹茶拿铁'}, img: 'Photo/drink/matcha.jpg', price: {normal: 4000, large: 6000} },
+            { id: 4, category: 'tea', name: {km: 'តែមេអំបៅដោះគោ', en: 'Butterfly Pea Tea', zh: '蝶豆花奶茶'}, img: 'Photo/drink/4.jpg', price: {normal: 3000, large: 5000} },
+            { id: 6, category: 'tea', name: {km: 'តែបៃតង ទឹកដោះគោ', en: 'Green Milk Tea', zh: '牛奶绿茶'}, img: 'Photo/drink/9.jpg', price: {normal: 3000, large: 5000} },
+            { id: 8, category: 'tea', name: {km: 'ប្រោនស៊ូហ្គឺ តែទឹកដោះគោ', en: 'Brown Sugar Milk Tea', zh: '黑糖奶茶'}, img: 'Photo/drink/Br.jpg', price: {normal: 3000, large: 5000} },
+            // Soda / Fruit
+            { id: 5, category: 'soda', name: {km: 'តែក្រូចឆ្មា', en: 'Lemon Red Tea', zh: '红茶柠檬'}, img: 'Photo/drink/10.jpg', price: {normal: 3000, large: 5000} },
+            { id: 7, category: 'soda', name: {km: 'ផាសិនសូដា', en: 'Passion Fruit Soda', zh: '百香果苏打'}, img: 'Photo/drink/6.jpg', price: {normal: 3000, large: 5000} },
+            // Canned / Bottled (Fixed Price)
+            { id: 9, category: 'canned_bottled', name: {km: 'កូកាកូឡា', en: 'Coca-Cola (Can)', zh: '可口可乐 (罐)'}, img: 'https://placehold.co/400x600/EF4444/FFFFFF?text=Coca-Cola', price: {fixed: 3000} },
+            { id: 10, category: 'canned_bottled', name: {km: 'ទឹកបរិសុទ្ធ វីតា', en: 'Vita Purified Water', zh: 'Vita 纯净水 (瓶)'}, img: 'https://placehold.co/400x600/3B82F6/FFFFFF?text=Vita+Water', price: {fixed: 2000} },
+            // Beer (Fixed Price)
+            { id: 11, category: 'beer', name: {km: 'ស្រាបៀរអង្គរ', en: 'Angkor Beer (Can)', zh: '吴哥啤酒 (罐)'}, img: 'https://placehold.co/400x600/F59E0B/FFFFFF?text=Angkor+Beer', price: {fixed: 5000} },
+            { id: 12, category: 'beer', name: {km: 'ស្រាបៀរគ្លូបល', en: 'Cambodia Beer (Can)', zh: '柬埔寨啤酒 (罐)'}, img: 'https://placehold.co/400x600/10B981/FFFFFF?text=Cambodia+Beer', price: {fixed: 5000} },
         ];
-
-        // Define the order of categories
-        const productCategories = ['coffee', 'milk_tea', 'fruit_soda', 'canned_soft', 'bottled_water', 'beer'];
 
         let currentLang = localStorage.getItem('language') || 'km';
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -332,7 +310,7 @@
         const KHR_TO_USD_RATE = 4000;
 
         // --- TRANSLATION & UTILITIES ---
-          function getTranslation(key, lang = currentLang) {
+        function getTranslation(key, lang = currentLang) {
             return key.split('.').reduce((o, i) => o?.[i], translations[lang]) || key;
         }
         
@@ -344,6 +322,9 @@
                 const text = getTranslation(el.dataset.i18n, lang);
                 if (text) el.innerHTML = text;
             });
+
+            // Handle title translation separately
+            document.querySelector('title').textContent = getTranslation('pageTitle', lang);
 
             // Handle placeholders for search input
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
@@ -384,121 +365,107 @@
         }
 
         // --- PRODUCT RENDERING & FILTERING ---
+
+        /**
+         * Creates the HTML for a single product card.
+         * @param {object} p - Product object
+         * @returns {string} - HTML string for the card
+         */
+        function createProductCard(p) {
+            const isFixedPrice = p.price.fixed !== undefined;
+            const normalPriceDisplay = isFixedPrice ? formatPrice(p.price.fixed) : formatPrice(p.price.normal);
+            const largePriceDisplay = isFixedPrice ? null : formatPrice(p.price.large);
+            const sizeKey = isFixedPrice ? 'fixedSize' : 'normalSize';
+
+            const buttonFixed = `
+                <button onclick="addToCart(${p.id}, 'fixed')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2.5 px-5 rounded-full w-full">
+                    ${getTranslation('cart.' + sizeKey)} - ${normalPriceDisplay}
+                </button>
+            `;
+
+            const buttonsVariable = `
+                <button onclick="addToCart(${p.id}, 'normal')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm sm:py-2.5 sm:px-5 rounded-full w-full">${getTranslation('cart.normalSize')} - ${normalPriceDisplay}</button>
+                <button onclick="addToCart(${p.id}, 'large')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm sm:py-2.5 sm:px-5 rounded-full w-full">${getTranslation('cart.largeSize')} - ${largePriceDisplay}</button>
+            `;
+
+            return `
+                <div class="product-card bg-white p-3 sm:p-5 rounded-xl shadow-lg text-center flex-shrink-0 w-52 sm:w-64">
+                    <img src="${p.img}" alt="${p.name[currentLang] || p.name['km']}" 
+                         class="w-full h-40 sm:h-56 object-cover rounded-lg mb-4" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x600/CCCCCC/FFFFFF?text=Image+Not+Found';">
+                    <h3 class="text-lg sm:text-xl font-bold mb-2 h-14 overflow-hidden">${p.name[currentLang] || p.name['km']}</h3>
+                    <div class="space-y-2 mt-4">
+                        ${isFixedPrice ? buttonFixed : buttonsVariable}
+                    </div>
+                </div>
+            `;
+        }
+
+
         function renderProducts(filterTerm = '') {
-            const productContainer = document.getElementById('product-content-area');
-            if (!productContainer) return;
-            productContainer.innerHTML = '';
+            const container = document.getElementById('product-categories-container');
+            if (!container) return;
+            container.innerHTML = '';
             
             const lowerCaseFilter = filterTerm.toLowerCase();
 
-            if (filterTerm.length > 0) {
-                // --- Mode 1: Filtered Grid View (Search Active) ---
-                
-                const filteredProducts = productData.filter(p => {
-                    // Check all language names for filter match
-                    const nameInCurrentLang = p.name[currentLang] || p.name['km'];
-                    const nameInEn = p.name['en'] || '';
-                    const nameInZh = p.name['zh'] || '';
-                    
-                    return nameInCurrentLang.toLowerCase().includes(lowerCaseFilter) ||
-                           nameInEn.toLowerCase().includes(lowerCaseFilter) ||
-                           nameInZh.toLowerCase().includes(lowerCaseFilter);
-                });
+            const filteredProducts = productData.filter(p => {
+                const searchString = Object.values(p.name).join(' ').toLowerCase();
+                // Check if the product name in any language or the category name matches the filter
+                const categoryName = getTranslation(`products.categories.${p.category}`).toLowerCase();
+                return searchString.includes(lowerCaseFilter) || categoryName.includes(lowerCaseFilter);
+            });
 
-                if (filteredProducts.length === 0) {
-                    productContainer.innerHTML = `<p class="w-full text-xl text-gray-500 mt-8">${getTranslation('products.noResults')}</p>`;
-                    return;
+            if (filteredProducts.length === 0 && filterTerm.length > 0) {
+                container.innerHTML = `<p class="text-xl text-gray-500 mt-8">${getTranslation('products.noResults')}</p>`;
+                return;
+            }
+
+            // Group filtered products by category
+            const categorizedProducts = filteredProducts.reduce((acc, product) => {
+                const categoryKey = product.category;
+                if (!acc[categoryKey]) {
+                    acc[categoryKey] = [];
                 }
+                acc[categoryKey].push(product);
+                return acc;
+            }, {});
 
-                // Display results in a standard responsive grid
-                const gridWrapper = document.createElement('div');
-                // Use md:grid class here so the CSS hover styles for grid mode apply
-                gridWrapper.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 justify-center md:grid'; 
-                
+            const isFiltering = filterTerm.length > 0;
+            const categoryKeys = Object.keys(categorizedProducts);
+
+            if (isFiltering) {
+                 // --- RENDER AS A SINGLE FILTERED ROW/GRID ---
+                container.classList.remove('space-y-12'); // Remove large category spacing
+                container.classList.add('grid', 'grid-cols-2', 'md:grid-cols-4', 'lg:grid-cols-5', 'gap-4', 'sm:gap-6');
+
                 filteredProducts.forEach(p => {
-                    gridWrapper.appendChild(createProductCard(p, true)); // pass true for grid mode
+                    container.insertAdjacentHTML('beforeend', createProductCard(p));
                 });
-                
-                productContainer.appendChild(gridWrapper);
 
             } else {
-                // --- Mode 2: Categorized Scrollable View (Default) ---
-                
-                productCategories.forEach(categoryKey => {
-                    const categoryProducts = productData.filter(p => p.category === categoryKey);
-                    
-                    if (categoryProducts.length === 0) return;
+                // --- RENDER CATEGORIES ---
+                container.classList.add('space-y-12');
+                container.classList.remove('grid', 'grid-cols-2', 'md:grid-cols-4', 'lg:grid-cols-5', 'gap-4', 'sm:gap-6');
+
+                categoryKeys.forEach(categoryKey => {
+                    const categoryName = getTranslation(`products.categories.${categoryKey}`);
+                    const products = categorizedProducts[categoryKey];
 
                     const categorySection = document.createElement('div');
-                    categorySection.className = 'category-section text-left mb-6';
-                    
-                    const categoryTitle = getTranslation(`products.categories.${categoryKey}`);
-
-                    // Category Heading
-                    const h3 = document.createElement('h3');
-                    h3.className = 'text-2xl font-bold mb-4 text-gray-800 border-b-2 border-theme-primary/50 inline-block pb-1';
-                    h3.textContent = categoryTitle;
-                    categorySection.appendChild(h3);
-
-                    // Horizontal Scroll Container
-                    const scrollContainer = document.createElement('div');
-                    scrollContainer.className = 'flex overflow-x-auto horizontal-scroll-container space-x-4 pb-4';
-
-                    categoryProducts.forEach(p => {
-                        scrollContainer.appendChild(createProductCard(p, false)); // pass false for scroll mode
-                    });
-                    
-                    categorySection.appendChild(scrollContainer);
-                    productContainer.appendChild(categorySection);
+                    categorySection.className = 'category-section';
+                    categorySection.innerHTML = `
+                        <h3 class="text-3xl font-bold mb-6 text-left border-b-4 border-theme-primary/50 pb-2">
+                            ${categoryName}
+                        </h3>
+                        <!-- Horizontal scroll for mobile, flexible grid for desktop inside the scroll area if needed -->
+                        <div class="product-row-scroll flex overflow-x-auto space-x-6 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-8 justify-start md:justify-center">
+                            ${products.map(p => createProductCard(p)).join('')}
+                        </div>
+                    `;
+                    container.appendChild(categorySection);
                 });
             }
-        }
-        
-        // Helper function to create a product card element
-        function createProductCard(p, isGridMode) {
-            const normalPriceDisplay = formatPrice(p.price.normal);
-            const largePriceDisplay = formatPrice(p.price.large);
-            const card = document.createElement('div');
-            
-            let cardClasses = 'product-card bg-white p-3 sm:p-5 rounded-xl shadow-lg border text-center transition-transform duration-300';
-            
-            if (!isGridMode) {
-                // Fixed width for scrollable view
-                cardClasses += ' flex-shrink-0 w-[180px] sm:w-[220px]'; 
-            } else {
-                // Auto width in grid view
-                cardClasses += ' w-full';
-            }
-            
-            // Determine button labels based on category
-            let normalSizeTranslationKey = 'cart.normalSize'; 
-            let largeSizeTranslationKey = 'cart.largeSize'; 
-            
-            if (p.category === 'canned_soft' || p.category === 'beer') {
-                normalSizeTranslationKey = 'cart.unitCan';
-            } else if (p.category === 'bottled_water') {
-                normalSizeTranslationKey = 'cart.unitBottle';
-            }
-
-
-            // Determine button visibility based on price structure
-            const showLargeButton = p.price.large > 0;
-
-            card.className = cardClasses;
-            card.dataset.productId = p.id;
-            card.innerHTML = `
-                <!-- Reduced image height for a more compact card size -->
-                <img src="${p.img}" alt="${p.name[currentLang]}" class="w-full h-40 sm:h-52 object-cover rounded-lg mb-4 mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/400x600/CCCCCC/FFFFFF?text=Image+Not+Found';">
-                <h3 class="text-md sm:text-lg font-bold mb-2 h-12 flex items-center justify-center">${p.name[currentLang]}</h3>
-                <div class="space-y-2 mt-4">
-                    <button onclick="addToCart(${p.id}, 'normal')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm rounded-full w-full">${getTranslation(normalSizeTranslationKey)} - ${normalPriceDisplay}</button>
-                    ${showLargeButton ? 
-                        `<button onclick="addToCart(${p.id}, 'large')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm rounded-full w-full">${getTranslation(largeSizeTranslationKey)} - ${largePriceDisplay}</button>` : 
-                        '<div class="h-10"></div>' /* Placeholder to keep card height consistent when large size is absent (e.g., canned drinks) */
-                    }
-                </div>
-            `;
-            return card;
         }
 
         function handleProductSearch() {
@@ -506,18 +473,16 @@
             renderProducts(searchTerm);
         }
 
-        // --- CART LOGIC (No changes needed here, keeping for completeness) ---
+        // --- CART LOGIC (Remaining functions are unchanged) ---
 
         function addToCart(productId, size) {
             const product = productData.find(p => p.id === productId);
-            const cartId = `${productId}-${size}`;
-            const existingItem = cart.find(item => item.cartId === cartId);
+            // Use 'fixed' price if available
+            const sizeKey = product.price.fixed !== undefined ? 'fixed' : size;
+            const price = product.price[sizeKey];
 
-            if (product.price[size] === 0 && size === 'large') {
-                 // Prevent adding 'large' size if price is 0 (i.e., not available)
-                console.error("Large size is not available for this item.");
-                return; 
-            }
+            const cartId = `${productId}-${sizeKey}`;
+            const existingItem = cart.find(item => item.cartId === cartId);
 
             if (existingItem) {
                 existingItem.quantity++;
@@ -526,8 +491,8 @@
                     cartId: cartId,
                     id: productId,
                     name: product.name,
-                    price: product.price[size], // Price is always stored in KHR
-                    size: size,
+                    price: price, // Price is always stored in KHR
+                    size: sizeKey,
                     img: product.img,
                     quantity: 1
                 });
@@ -587,30 +552,19 @@
                 cart.forEach(item => {
                     totalKhr += item.price * item.quantity;
                     const itemPriceDisplay = formatPrice(item.price);
+                    const itemTotalDisplay = formatPrice(item.price * item.quantity);
+                    
+                    const itemSizeKey = item.size + 'Size';
+                    const itemSizeLabel = getTranslation('cart.' + itemSizeKey);
+
                     const itemEl = document.createElement('div');
                     itemEl.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm border gap-2';
-                    
-                    // Determine size display text for cart
-                    let sizeDisplayText;
-                    if (item.size === 'normal') {
-                        const product = productData.find(p => p.id === item.id);
-                        if (product.category === 'canned_soft' || product.category === 'beer') {
-                            sizeDisplayText = getTranslation('cart.unitCan');
-                        } else if (product.category === 'bottled_water') {
-                            sizeDisplayText = getTranslation('cart.unitBottle');
-                        } else {
-                            sizeDisplayText = getTranslation('cart.normalSize');
-                        }
-                    } else {
-                        sizeDisplayText = getTranslation('cart.largeSize');
-                    }
-                    
                     itemEl.innerHTML = `
-                        <div class="flex items-center gap-3 flex-grow">
+                        <div class="flex items-center gap-3 flex-grow min-w-0">
                             <img src="${item.img}" alt="${item.name[currentLang]}" class="w-16 h-16 object-cover rounded-md border flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Error';">
                             <div class="min-w-0">
-                                <h4 class="font-semibold truncate">${item.name[currentLang]} <span class="text-sm text-gray-500">(${sizeDisplayText})</span></h4>
-                                <p class="text-gray-600 font-bold">${itemPriceDisplay}</p>
+                                <h4 class="font-semibold truncate">${item.name[currentLang] || item.name['km']} <span class="text-sm text-gray-500">(${itemSizeLabel})</span></h4>
+                                <p class="text-gray-600 font-bold text-sm">@ ${itemPriceDisplay}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
@@ -618,9 +572,10 @@
                             <span class="w-8 text-center font-medium text-lg">${item.quantity}</span>
                             <button onclick="updateCart('${item.cartId}', 'increase')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full font-bold text-lg flex items-center justify-center">+</button>
                         </div>
-                        <button onclick="updateCart('${item.cartId}', 'remove')" class="ml-2 text-red-500 hover:text-red-700 flex-shrink-0">
-                            <i class="fas fa-trash-alt text-xl"></i>
-                        </button>
+                        <div class="text-right flex-shrink-0 w-20 sm:w-28">
+                            <p class="font-extrabold text-theme-primary text-lg">${itemTotalDisplay}</p>
+                            <button onclick="updateCart('${item.cartId}', 'remove')" class="text-red-500 hover:text-red-700 text-sm mt-1" data-i18n="cart.removeButton">លុប</button>
+                        </div>
                     `;
                     container.appendChild(itemEl);
                 });
@@ -638,7 +593,7 @@
             msgBox.classList.remove('hidden', 'translate-y-4', 'opacity-0');
             setTimeout(() => {
                 msgBox.classList.add('translate-y-4', 'opacity-0');
-                setTimeout(() => msgBox.classList.add('hidden'), 3000); 
+                setTimeout(() => msgBox.classList.add('hidden'), 300); 
             }, 2000);
         }
 
@@ -651,7 +606,7 @@
         function sendOrderToTelegram() {
             if (cart.length === 0) return;
 
-            const telegramUsername = 'maklinger';
+            const telegramUsername = 'maklinger'; // Replace with the actual Telegram username
             let message = 'សួស្តី!👋 ខ្ញុំចង់កម្ម៉ង់ភេសជ្ជៈខាងក្រោម៖👇\n\n';
             
             let totalKhr = 0;
@@ -661,20 +616,8 @@
                 const itemPriceInCurrentCurrency = formatPrice(itemTotal);
                 const itemName = item.name[currentLang] || item.name['km'];
                 
-                // Determine size display text for Telegram message
-                let itemSize;
-                if (item.size === 'normal') {
-                    const product = productData.find(p => p.id === item.id);
-                    if (product.category === 'canned_soft' || product.category === 'beer') {
-                        itemSize = getTranslation('cart.unitCan');
-                    } else if (product.category === 'bottled_water') {
-                        itemSize = getTranslation('cart.unitBottle');
-                    } else {
-                        itemSize = getTranslation('cart.normalSize');
-                    }
-                } else {
-                    itemSize = getTranslation('cart.largeSize');
-                }
+                const itemSizeKey = item.size + 'Size';
+                const itemSize = getTranslation('cart.' + itemSizeKey);
 
                 message += `- ${itemName} (${itemSize}) x ${item.quantity} = ${itemPriceInCurrentCurrency}\n`;
             });
@@ -710,10 +653,15 @@
                 const qrKhrImg = document.getElementById('qr-khr');
                 const qrUsdImg = document.getElementById('qr-usd');
 
+                // Determine which QR code to show based on the current currency setting
+                const totalUsd = totalKhr / KHR_TO_USD_RATE;
+                const showUsdQr = currentCurrency === 'usd' || totalUsd >= 5; // Maybe always show USD QR if total is significant, but sticking to currentCurrency logic for simplicity.
+
                 if (currentCurrency === 'khr') {
                     qrKhrImg.classList.remove('hidden');
                     qrUsdImg.classList.add('hidden');
                 } else {
+                    // Assuming USD QR is used when currency is set to USD
                     qrKhrImg.classList.add('hidden');
                     qrUsdImg.classList.remove('hidden');
                 }
@@ -735,10 +683,11 @@
             document.getElementById('product-search').addEventListener('input', handleProductSearch);
 
             setLanguage(currentLang);
-            
-            // Re-render products to ensure scrollability is set up correctly on load
-            renderProducts(document.getElementById('product-search')?.value || '');
         });
+        
+        // Expose functions globally for inline HTML event handlers (like onclick)
+        window.addToCart = addToCart;
+        window.updateCart = updateCart;
     </script>
 </body>
 </html>
