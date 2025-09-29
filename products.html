@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Libraries for PDF and Image generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         body {
             font-family: 'Inter', 'Kantumruy Pro', sans-serif;
@@ -34,7 +39,7 @@
         .add-to-cart-btn { transition: all 0.2s ease-in-out; }
         .add-to-cart-btn:hover { transform: scale(1.05); }
 
-        /* Custom scrollbar for subtle look on desktop, standard on mobile */
+        /* Custom scrollbar */
         .product-row-scroll::-webkit-scrollbar { height: 8px; }
         .product-row-scroll::-webkit-scrollbar-thumb { background-color: #D97706; border-radius: 4px; }
         .product-row-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -86,13 +91,12 @@
             <div class="container mx-auto text-center">
                 <h2 class="text-4xl font-bold mb-12" data-i18n="products.heading">☕បញ្ជីភេសជ្ជៈ🥤</h2>
                 
-                <!-- ស្វែងរកភេសជ្ជៈ Search Input -->
+                <!-- Search Input -->
                 <div class="mb-10 max-w-lg mx-auto">
                     <input type="text" id="product-search" placeholder="ស្វែងរកភេសជ្ជៈ..." data-i18n-placeholder="products.searchPlaceholder" class="w-full p-3 border-2 border-gray-300 rounded-full shadow-inner focus:outline-none focus:border-theme-primary transition-all font-semibold text-lg text-center">
                 </div>
-                <!-- បញ្ចប់ស្វែងរកភេសជ្ជៈ -->
 
-                <!-- Product Categories Container (Will be filled by JS) -->
+                <!-- Product Categories Container -->
                 <div id="product-categories-container" class="space-y-12">
                     <!-- Categories or Filtered Results will be dynamically inserted here -->
                 </div>
@@ -113,33 +117,36 @@
                         <span class="text-2xl font-bold" data-i18n="cart.totalPrice">តម្លៃសរុប:</span>
                         <span id="cart-total" class="text-3xl font-extrabold text-theme-primary">0៛</span>
                     </div>
-                     <div class="text-right mb-6">
-                         <button id="currency-toggle-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full transition-colors text-sm">
-                             <i class="fas fa-exchange-alt mr-2"></i> <span data-i18n="cart.switchToUSD">ប្តូរទៅជា USD</span>
-                         </button>
-                     </div>
+                     <div class="text-right mb-6 flex justify-between items-center">
+                        <button id="generate-invoice-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition-colors text-sm">
+                            <i class="fas fa-receipt mr-2"></i> <span data-i18n="cart.generateInvoice">បង្កើតវិក្កយបត្រ</span>
+                        </button>
+                        <button id="currency-toggle-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full transition-colors text-sm">
+                            <i class="fas fa-exchange-alt mr-2"></i> <span data-i18n="cart.switchToUSD">ប្តូរទៅជា USD</span>
+                        </button>
+                    </div>
                     <div class="space-y-4 text-center">
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
                             <button id="payment-qr-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-full w-full sm:w-auto transition-transform hover:scale-105">
                                 <i class="fas fa-qrcode mr-2"></i> <span data-i18n="cart.paymentQR">ទូទាត់តាម QR</span>
                             </button>
-                            <button id="send-order-telegram-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-full w-full sm:w-auto transition-transform hover:scale-105">
-                                <i class="fab fa-telegram-plane mr-2"></i> <span data-i18n="cart.sendOrderTelegram">ផ្ញើបញ្ជីទំនិញតាម Telegram</span>
+                            <button id="send-invoice-telegram-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-full w-full sm:w-auto transition-transform hover:scale-105">
+                                <i class="fab fa-telegram-plane mr-2"></i> <span data-i18n="cart.sendInvoiceToSeller">ផ្ញើវិក្កយបត្រទៅអ្នកលក់</span>
                             </button>
                         </div>
-                        <p class="text-sm text-gray-600 font-semibold pt-4" data-i18n="cart.contactOrder">ឬទំនាក់ទំនងទិញតាមរយៈ</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                            <a href="https://web.facebook.com/nangsamphors" target="_blank" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
-                                <i class="fab fa-facebook-f mr-2"></i> Facebook
+                        <p class="text-sm text-gray-600 font-semibold pt-4" data-i18n="cart.contactOrder">ឬទំនាក់ទំនងកម្មង់តាមរយៈ</p>
+                        <div class="flex justify-center items-center gap-4 mt-2">
+                            <a href="https://web.facebook.com/nangsamphors" target="_blank" title="Facebook" class="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-md transition-transform hover:scale-110">
+                                <i class="fab fa-facebook-f text-xl"></i>
                             </a>
-                            <a href="https://t.me/vongsreysamphors" target="_blank" class="flex items-center justify-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
-                                <i class="fab fa-telegram-plane mr-2"></i> Telegram
+                            <a href="https://t.me/vongsreysamphors" target="_blank" title="Telegram" class="flex items-center justify-center w-12 h-12 bg-sky-500 hover:bg-sky-600 text-white rounded-full shadow-md transition-transform hover:scale-110">
+                                <i class="fab fa-telegram-plane text-xl"></i>
                             </a>
-                            <a href="tel:068237990" class="flex items-center justify-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
-                                <i class="fas fa-phone mr-2"></i> 068 237 990
+                            <a href="tel:068237990" title="Call 068 237 990" class="flex items-center justify-center w-12 h-12 bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-md transition-transform hover:scale-110">
+                                <i class="fas fa-phone text-xl"></i>
                             </a>
-                            <a href="tel:081695138" class="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full shadow-md transition-transform hover:scale-105">
-                                <i class="fas fa-phone mr-2"></i> 081 695 138
+                            <a href="tel:081695138" title="Call 081 695 138" class="flex items-center justify-center w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md transition-transform hover:scale-110">
+                                <i class="fas fa-phone text-xl"></i>
                             </a>
                         </div>
                     </div>
@@ -172,9 +179,31 @@
             <p class="text-xl font-bold text-theme-primary mb-4" id="qr-total-amount"></p>
             <div id="qr-code-container" class="relative w-full max-w-[250px] aspect-square mx-auto">
                 <img id="qr-khr" src="Photo/QR code/khmer or.jpg" alt="KHQR for KHR" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain">
-                <img id="qr-usd" src="Photo\QR code\usd qr code.jpg" alt="KHQR for USD" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain hidden">
+                <img id="qr-usd" src="Photo/QR code/usd qr code.jpg" alt="KHQR for USD" class="mx-auto rounded-md border-4 border-gray-200 w-full h-full object-contain hidden">
             </div>
             <p class="mt-4 text-gray-600" data-i18n="cart.scanNote">សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។</p>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[1002] p-4">
+        <div class="bg-white p-6 rounded-xl shadow-xl relative max-w-2xl w-full max-h-[90vh] flex flex-col">
+            <div id="invoice-content-wrapper" class="bg-white p-4 border rounded-lg overflow-y-auto">
+                <!-- Invoice content will be generated here -->
+            </div>
+            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                 <button id="closeInvoiceModal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full w-full sm:w-auto">
+                    <i class="fas fa-times mr-2"></i> <span data-i18n="invoice.close">Close</span>
+                </button>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button id="download-img-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full w-full sm:w-auto">
+                        <i class="fas fa-image mr-2"></i> <span data-i18n="invoice.downloadImage">Download Image</span>
+                    </button>
+                    <button id="download-pdf-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full sm:w-auto">
+                        <i class="fas fa-file-pdf mr-2"></i> <span data-i18n="invoice.downloadPDF">Download PDF</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -188,20 +217,19 @@
                     searchPlaceholder: 'ស្វែងរកភេសជ្ជៈ...',
                     noResults: 'រកមិនឃើញភេសជ្ជៈណាត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
                     categories: {
-                        coffee: 'កាហ្វេ', // <--- UPDATED
+                        coffee: 'កាហ្វេ',
                         tea: 'ប្រភេទតែ/ឡាតេ',
                         soda: 'ប្រភេទទឹកផ្លែឈើ/សូដា',
-                        blended: 'ប្រភេទក្រឡុក', // <--- NEW
+                        blended: 'ប្រភេទក្រឡុក',
                         canned_bottled: 'ភេសជ្ជៈកំប៉ុង/ដប',
                         beer: 'ប្រភេទស្រាបៀរ'
                     }
                 },
                 cart: { 
-                    heading: 'រទេះទំនិញរបស់អ្នក', 
+                    heading: '🛒រទេះទំនិញអ្នក🛍️', 
                     emptyMessage: 'មិនទាន់មានភេសជ្ជៈនៅក្នុងរទេះទេ។', 
                     totalPrice: 'តម្លៃសរុប:', 
                     addedToCartMessage: 'បានបន្ថែមទៅរទេះ! ចុចដើម្បីមើល', 
-                    removeButton: 'លុប', 
                     normalSize: 'កែវធម្មតា', 
                     largeSize: 'កែវធំ', 
                     canSize: 'មួយកំប៉ុង',
@@ -210,9 +238,26 @@
                     paymentQR: 'ទូទាត់តាម QR', 
                     scanQR: 'ស្កេនដើម្បីទូទាត់', 
                     scanNote: 'សូមស្កេន QR Code នេះដើម្បីធ្វើការទូទាត់។', 
-                    switchToUSD: 'ប្តូរទៅជា USD', 
-                    switchToKHR: 'ប្តូរទៅជា ៛', 
-                    sendOrderTelegram: 'ផ្ញើបញ្ជីទំនិញតាម Telegram' 
+                    switchToUSD: 'ប្តូរទៅជា ដុល្លា', 
+                    switchToKHR: 'ប្តូរទៅជា រៀល', 
+                    sendInvoiceToSeller: 'ផ្ញើវិក្កយបត្រទៅអ្នកលក់',
+                    generateInvoice: 'បង្កើតវិក្កយបត្រ',
+                    telegramThankYou: 'សូមជួយរៀបចំការកម្ម៉ង់នេះផង។ សូមអរគុណ! 🙏'
+                },
+                invoice: {
+                    title: 'វិក្កយបត្រ',
+                    invoice_no: 'លេខវិក្កយបត្រ',
+                    date: 'កាលបរិច្ឆេទ',
+                    item: 'មុខទំនិញ',
+                    qty: 'ចំនួន',
+                    price: 'តម្លៃឯកតា',
+                    total: 'សរុប',
+                    subtotal: 'សរុប',
+                    tax: 'ពន្ធ (0%)',
+                    thank_you: 'សូមអរគុណសម្រាប់ការទិញ!',
+                    close: 'បិទ',
+                    downloadPDF: 'ទាញយក PDF',
+                    downloadImage: 'ទាញយករូបភាព'
                 },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee។ រក្សាសិទ្ធិគ្រប់យ៉ាង។', privacyPolicy: 'គោលការណ៍ឯកជនភាព', termsOfService: 'លក្ខខណ្ឌប្រើប្រាស់' }
             },
@@ -224,20 +269,19 @@
                     searchPlaceholder: 'Search Drinks...',
                     noResults: 'No drinks found matching your search.',
                     categories: {
-                        coffee: 'Coffee', // <--- UPDATED
+                        coffee: 'Coffee',
                         tea: 'Tea / Latte',
                         soda: 'Fruit / Soda',
-                        blended: 'Blended Drinks / Shakes', // <--- NEW
+                        blended: 'Blended Drinks / Shakes',
                         canned_bottled: 'Canned / Bottled Drinks',
                         beer: 'Beer'
                     }
                 },
                 cart: { 
-                    heading: 'Your Shopping Cart', 
+                    heading: '🛒Your Cart🛍️', 
                     emptyMessage: 'No drinks in the cart yet.', 
                     totalPrice: 'Total Price:', 
                     addedToCartMessage: 'Added to cart! Click to view', 
-                    removeButton: 'Remove', 
                     normalSize: 'Normal', 
                     largeSize: 'Large', 
                     canSize: 'Can',
@@ -248,7 +292,24 @@
                     scanNote: 'Please scan this QR code to make a payment.', 
                     switchToUSD: 'Switch to USD', 
                     switchToKHR: 'Switch to KHR', 
-                    sendOrderTelegram: 'Send Order via Telegram' 
+                    sendInvoiceToSeller: 'Send Invoice to Seller',
+                    generateInvoice: 'Generate Invoice',
+                    telegramThankYou: 'Please prepare this order. Thank you! 🙏'
+                },
+                invoice: {
+                    title: 'Invoice',
+                    invoice_no: 'Invoice No.',
+                    date: 'Date',
+                    item: 'Item',
+                    qty: 'Qty',
+                    price: 'Unit Price',
+                    total: 'Total',
+                    subtotal: 'Subtotal',
+                    tax: 'Tax (0%)',
+                    thank_you: 'Thank you for your purchase!',
+                    close: 'Close',
+                    downloadPDF: 'Download PDF',
+                    downloadImage: 'Download Image'
                 },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee. All rights reserved.', privacyPolicy: 'Privacy Policy', termsOfService: 'Terms of Service' }
             },
@@ -260,20 +321,19 @@
                     searchPlaceholder: '搜索饮品...',
                     noResults: '未找到符合您搜索条件的饮品。',
                     categories: {
-                        coffee: '咖啡', // <--- UPDATED
+                        coffee: '咖啡',
                         tea: '茶类 / 拿铁',
                         soda: '水果 / 苏打',
-                        blended: '冰沙/奶昔系列', // <--- NEW
+                        blended: '冰沙/奶昔系列',
                         canned_bottled: '罐装 / 瓶装饮品',
                         beer: '啤酒'
                     }
                 },
                 cart: { 
-                    heading: '您的购物车', 
+                    heading: '🛒您的购物车🛍️', 
                     emptyMessage: '购物车中还没有饮品。', 
                     totalPrice: '总价:', 
                     addedToCartMessage: '已添加到购物车！点击查看', 
-                    removeButton: '删除', 
                     normalSize: '普通杯', 
                     largeSize: '大杯', 
                     canSize: '罐装',
@@ -284,25 +344,36 @@
                     scanNote: '请扫描此二维码进行付款。', 
                     switchToUSD: '切换到美元', 
                     switchToKHR: '切换到瑞尔', 
-                    sendOrderTelegram: '通过 Telegram 发送订单' 
+                    sendInvoiceToSeller: '发送发票给卖家',
+                    generateInvoice: '生成发票',
+                    telegramThankYou: '请准备此订单。谢谢！🙏'
+                },
+                invoice: {
+                    title: '发票',
+                    invoice_no: '发票号码',
+                    date: '日期',
+                    item: '项目',
+                    qty: '数量',
+                    price: '单价',
+                    total: '总计',
+                    subtotal: '小计',
+                    tax: '税 (0%)',
+                    thank_you: '感谢您的购买!',
+                    close: '关闭',
+                    downloadPDF: '下载PDF',
+                    downloadImage: '下载图片'
                 },
                 footer: { copyright: '&copy; 2025 Mak LingEr-Coffee。保留所有权利。', privacyPolicy: '隐私政策', termsOfService: '服务条款' }
             }
         };
         
-        // Define the desired category order
-        const CATEGORY_ORDER = ['coffee', 'tea', 'soda', 'blended', 'canned_bottled', 'beer']; // <--- USED FOR ORDERING
+        const CATEGORY_ORDER = ['coffee', 'tea', 'soda', 'blended', 'canned_bottled', 'beer'];
 
         const productData = [
-            // Coffee (Now only non-blended coffee)
             { id: 1, category: 'coffee', name: {km: 'កាហ្វេទឹកកក🧊', en: 'Iced Coffee🧊', zh: '冰咖啡🧊'}, img: 'Photo/drink/1.jpg', price: {normal: 3000, large: 5000} },
             { id: 2, category: 'coffee', name: {km: 'កាហ្វេទឹកដោះគោ🥛', en: 'Coffee with Milk🥛', zh: '牛奶咖啡🥛'}, img: 'Photo/drink/2.jpg', price: {normal: 3000, large: 5000} },
-            
-            // Blended (Blended coffee moved here)
-            { id: 3, category: 'blended', name: {km: 'កាហ្វេ ក្រឡុក🥤', en: 'Blended Coffee 🥤', zh: '咖啡冰沙🥤'}, img: 'Photo/drink/Blended Coffee.jpg', price: {normal: 4000, large: 6000} }, // <--- MOVED TO NEW CATEGORY
-            { id: 4, category: 'blended', name: {km: 'ផាសិន ក្រឡុក🍹', en: 'Blended Passion Fruit🍹', zh: '百香果冰沙🍹'}, img: 'Photo/drink/ផាសិន.png', price: {normal: 4000, large: 6000} }, // <--- MOVED TO NEW CATEGORY
-            
-            // Tea / Latte
+            { id: 3, category: 'blended', name: {km: 'កាហ្វេ ក្រឡុក🥤', en: 'Blended Coffee 🥤', zh: '咖啡冰沙🥤'}, img: 'Photo/drink/Blended Coffee.jpg', price: {normal: 4000, large: 6000} },
+            { id: 4, category: 'blended', name: {km: 'ផាសិន ក្រឡុក🍹', en: 'Blended Passion Fruit🍹', zh: '百香果冰沙🍹'}, img: 'Photo/drink/ផាសិន.png', price: {normal: 4000, large: 6000} },
             { id: 5, category: 'tea', name: {km: 'ម៉ាតឆា ឡាតេ🍵', en: 'Matcha Latte🍵', zh: '抹茶拿铁🍵'}, img: 'Photo/drink/matcha.jpg', price: {normal: 4000, large: 6000} },
             { id: 6, category: 'tea', name: {km: 'តែក្រហមក្រូចឆ្មា🍋🧊', en: 'Lemon Red Tea🍋🧊', zh: '红茶柠檬🍋🧊'}, img: 'Photo/drink/10.jpg', price: {normal: 3000, large: 5000} },
             { id: 7, category: 'tea', name: {km: 'តែបៃតងក្រូចឆ្មា🍋🍃', en: 'Iced Green Tea with Lemon🍋🍵', zh: '柠檬绿茶🍋🍃'}, img: 'Photo/drink/តែបៃតងក្រូច.jpg', price: {normal: 3000, large: 5000} },
@@ -310,17 +381,11 @@
             { id: 9, category: 'tea', name: {km: 'តែបៃតង ទឹកដោះគោ🍃🥛', en: 'Green Milk Tea🍃🥛', zh: '牛奶绿茶🍃🥛'}, img: 'Photo/drink/9.jpg', price: {normal: 3000, large: 5000} },
             { id: 10, category: 'tea', name: {km: 'តែមេអំបៅ ដូងក្រអូប🦋🥥', en: 'Butterfly Pea Coconut Water🦋🥥', zh: '蝶豆花椰子水🦋🥥'}, img: 'Photo/drink/តែមេអំបៅដូង.jpg', price: {normal: 3000, large: 5000} },
             { id: 11, category: 'tea', name: {km: 'ប្រោនស៊ូហ្គឺ🍯🥛', en: 'Brown Sugar​🍯🥛', zh: '黑糖奶茶🍯🥛'}, img: 'Photo/drink/Br.jpg', price: {normal: 3000, large: 5000} },
-            
-            // Soda / Fruit
             { id: 12, category: 'soda', name: {km: 'ផាសិនសូដា🍹✨', en: 'Passion Fruit Soda🍹', zh: '百香果苏打🍹✨'}, img: 'Photo/drink/6.jpg', price: {normal: 3000, large: 5000} },
-            
-            // Canned / Bottled (Fixed Price - now uses 'can' or 'bottle' as price key)
-            { id: 13, category: 'canned_bottled', name: {km: 'កូកាកូឡា🥫', en: 'Coca-Cola🥫', zh: '可口可乐🥫'}, img: 'Photo/drink/coca-cola.jpg', price: {can: 2000} }, // price key: 'can'
-            { id: 14, category: 'canned_bottled', name: {km: 'ទឹកបរិសុទ្ធ វីតាល់', en: 'Vital Purified Water💧', zh: '活力纯净水'}, img: 'Photo/drink/Vital.jpg', price: {bottle: 1000} }, // price key: 'bottle'
-            
-            // Beer (Fixed Price - now uses 'can' as price key)
-            { id: 15, category: 'beer', name: {km: 'ស្រាបៀរកម្ពុជា🍻', en: 'Cambodia Beer🍻', zh: '柬埔寨啤酒🍻'}, img: 'Photo/drink/cambodia beer.jpg', price: {can: 2500} }, // price key: 'can'
-            { id: 16, category: 'beer', name: {km: 'ស្រាបៀរ ហ្គិនស៍បឺគ 🍻', en: 'Ganzberg Beer🍻', zh: 'Ganzberg 啤酒🍻'}, img: 'Photo/drink/Ganzberg.jpg', price: {can: 2500} }, // price key: 'can'
+            { id: 13, category: 'canned_bottled', name: {km: 'កូកាកូឡា🥫', en: 'Coca-Cola🥫', zh: '可口可乐🥫'}, img: 'Photo/drink/coca-cola.jpg', price: {can: 2000} },
+            { id: 14, category: 'canned_bottled', name: {km: 'ទឹកបរិសុទ្ធ វីតាល់', en: 'Vital Purified Water💧', zh: '活力纯净水'}, img: 'Photo/drink/Vital.jpg', price: {bottle: 1000} },
+            { id: 15, category: 'beer', name: {km: 'ស្រាបៀរកម្ពុជា🍻', en: 'Cambodia Beer🍻', zh: '柬埔寨啤酒🍻'}, img: 'Photo/drink/cambodia beer.jpg', price: {can: 2500} },
+            { id: 16, category: 'beer', name: {km: 'ស្រាបៀរ ហ្គិនស៍បឺគ 🍻', en: 'Ganzberg Beer🍻', zh: 'Ganzberg 啤酒🍻'}, img: 'Photo/drink/Ganzberg.jpg', price: {can: 2500} },
         ];
 
         let currentLang = localStorage.getItem('language') || 'km';
@@ -341,17 +406,12 @@
                 const text = getTranslation(el.dataset.i18n, lang);
                 if (text) el.innerHTML = text;
             });
-
-            // Handle title translation separately
             document.querySelector('title').textContent = getTranslation('pageTitle', lang);
-
-            // Handle placeholders for search input
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.dataset.i18nPlaceholder;
                 const text = getTranslation(key, lang);
                 if (text) el.placeholder = text;
             });
-
             updateLanguageButtons();
             const searchTerm = document.getElementById('product-search')?.value || '';
             renderProducts(searchTerm);
@@ -384,19 +444,9 @@
         }
 
         // --- PRODUCT RENDERING & FILTERING ---
-
-        /**
-         * Creates the HTML for a single product card.
-         * @param {object} p - Product object
-         * @returns {string} - HTML string for the card
-         */
         function createProductCard(p) {
-            // Determine if it has variable sizes (normal/large)
             const isVariablePrice = p.price.normal !== undefined && p.price.large !== undefined;
-            
-            // Determine fixed size format ('can' or 'bottle')
             const sizeFormat = p.price.can ? 'can' : (p.price.bottle ? 'bottle' : null);
-            
             let buttonsHtml = '';
 
             if (isVariablePrice) {
@@ -407,10 +457,8 @@
                     <button onclick="addToCart(${p.id}, 'large')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2 px-3 text-sm sm:py-2.5 sm:px-5 rounded-full w-full">${getTranslation('cart.largeSize')} - ${largePriceDisplay}</button>
                 `;
             } else if (sizeFormat) {
-                // Fixed price item (can or bottle)
                 const fixedPriceDisplay = formatPrice(p.price[sizeFormat]);
-                const sizeKey = sizeFormat + 'Size'; // 'canSize' or 'bottleSize'
-
+                const sizeKey = sizeFormat + 'Size';
                 buttonsHtml = `
                     <button onclick="addToCart(${p.id}, '${sizeFormat}')" class="add-to-cart-btn bg-theme-primary hover:bg-theme-primary-dark text-white font-bold py-2.5 px-5 rounded-full w-full">
                         ${getTranslation('cart.' + sizeKey)} - ${fixedPriceDisplay}
@@ -431,17 +479,14 @@
             `;
         }
 
-
         function renderProducts(filterTerm = '') {
             const container = document.getElementById('product-categories-container');
             if (!container) return;
             container.innerHTML = '';
             
             const lowerCaseFilter = filterTerm.toLowerCase();
-
             const filteredProducts = productData.filter(p => {
                 const searchString = Object.values(p.name).join(' ').toLowerCase();
-                // Check if the product name in any language or the category name matches the filter
                 const categoryName = getTranslation(`products.categories.${p.category}`).toLowerCase();
                 return searchString.includes(lowerCaseFilter) || categoryName.includes(lowerCaseFilter);
             });
@@ -451,12 +496,9 @@
                 return;
             }
 
-            // Group filtered products by category
             const categorizedProducts = filteredProducts.reduce((acc, product) => {
                 const categoryKey = product.category;
-                if (!acc[categoryKey]) {
-                    acc[categoryKey] = [];
-                }
+                if (!acc[categoryKey]) acc[categoryKey] = [];
                 acc[categoryKey].push(product);
                 return acc;
             }, {});
@@ -464,32 +506,25 @@
             const isFiltering = filterTerm.length > 0;
             
             if (isFiltering) {
-                 // --- RENDER AS A SINGLE FILTERED ROW/GRID ---
-                container.classList.remove('space-y-12'); // Remove large category spacing
+                container.classList.remove('space-y-12');
                 container.classList.add('grid', 'grid-cols-2', 'md:grid-cols-4', 'lg:grid-cols-5', 'gap-4', 'sm:gap-6');
-
                 filteredProducts.forEach(p => {
                     container.insertAdjacentHTML('beforeend', createProductCard(p));
                 });
-
             } else {
-                // --- RENDER CATEGORIES IN DEFINED ORDER ---
                 container.classList.add('space-y-12');
                 container.classList.remove('grid', 'grid-cols-2', 'md:grid-cols-4', 'lg:grid-cols-5', 'gap-4', 'sm:gap-6');
                 
                 CATEGORY_ORDER.forEach(categoryKey => {
                     const products = categorizedProducts[categoryKey];
-                    
                     if (products && products.length > 0) {
                         const categoryName = getTranslation(`products.categories.${categoryKey}`);
-                        
                         const categorySection = document.createElement('div');
                         categorySection.className = 'category-section';
                         categorySection.innerHTML = `
                             <h3 class="text-3xl font-bold mb-6 text-left border-b-4 border-theme-primary/50 pb-2">
                                 ${categoryName}
                             </h3>
-                            <!-- Horizontal scroll for mobile, flexible grid for desktop inside the scroll area if needed -->
                             <div class="product-row-scroll flex overflow-x-auto space-x-6 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-8 justify-start md:justify-center">
                                 ${products.map(p => createProductCard(p)).join('')}
                             </div>
@@ -506,28 +541,16 @@
         }
 
         // --- CART LOGIC ---
-
         function addToCart(productId, size) {
             const product = productData.find(p => p.id === productId);
-            
-            // size is passed directly as the price key: 'normal', 'large', 'can', or 'bottle'
             const price = product.price[size]; 
-
             const cartId = `${productId}-${size}`;
             const existingItem = cart.find(item => item.cartId === cartId);
 
             if (existingItem) {
                 existingItem.quantity++;
             } else {
-                cart.push({
-                    cartId: cartId,
-                    id: productId,
-                    name: product.name,
-                    price: price, // Price is always stored in KHR
-                    size: size, // size is the specific key: 'normal', 'large', 'can', or 'bottle'
-                    img: product.img,
-                    quantity: 1
-                });
+                cart.push({ cartId, id: productId, name: product.name, price, size, img: product.img, quantity: 1 });
             }
             saveCart();
             showCartMessage();
@@ -584,13 +607,10 @@
                 cart.forEach(item => {
                     totalKhr += item.price * item.quantity;
                     const itemTotalDisplay = formatPrice(item.price * item.quantity);
-                    
-                    // item.size is now 'normal', 'large', 'can', or 'bottle'
                     const itemSizeKey = item.size + 'Size'; 
                     const itemSizeLabel = getTranslation('cart.' + itemSizeKey);
 
                     const itemEl = document.createElement('div');
-                    // UPDATED RESPONSIVE CART ITEM LAYOUT
                     itemEl.className = 'bg-gray-50 p-4 rounded-xl shadow-sm border';
                     itemEl.innerHTML = `
                         <div class="flex items-center justify-between gap-4">
@@ -598,7 +618,7 @@
                                 <img src="${item.img}" alt="${item.name[currentLang] || item.name['km']}" class="w-16 h-16 object-cover rounded-lg border flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Error';">
                                 <div class="min-w-0">
                                     <h4 class="font-semibold text-gray-800">${item.name[currentLang] || item.name['km']} <span class="text-sm font-medium text-gray-500">(${itemSizeLabel})</span></h4>
-                                     <p class="text-gray-600 font-bold text-sm sm:hidden">Total: <span class="text-theme-primary">${itemTotalDisplay}</span></p> <!-- Total for mobile -->
+                                    <p class="text-gray-600 font-bold text-sm sm:hidden">Total: <span class="text-theme-primary">${itemTotalDisplay}</span></p>
                                 </div>
                             </div>
                             <div class="text-right flex-shrink-0 hidden sm:block">
@@ -606,9 +626,9 @@
                             </div>
                         </div>
                         <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
-                            <div>
-                                <button onclick="updateCart('${item.cartId}', 'remove')" class="text-red-500 hover:text-red-700 text-sm font-semibold" data-i18n="cart.removeButton">Remove</button>
-                            </div>
+                             <button onclick="updateCart('${item.cartId}', 'remove')" class="text-red-500 hover:text-red-700 font-semibold transition-colors w-10 h-10 flex items-center justify-center rounded-full hover:bg-red-100">
+                                <i class="fas fa-trash-alt text-lg"></i>
+                            </button>
                             <div class="flex items-center gap-2">
                                 <button onclick="updateCart('${item.cartId}', 'decrease')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 w-9 h-9 rounded-full font-bold text-xl flex items-center justify-center transition-transform hover:scale-110">-</button>
                                 <span class="w-10 text-center font-bold text-xl text-gray-800">${item.quantity}</span>
@@ -627,6 +647,7 @@
             }
         }
 
+        // --- UI Interactions ---
         function showCartMessage() {
             const msgBox = document.getElementById('cartMessageBox');
             msgBox.classList.remove('hidden', 'translate-y-4', 'opacity-0');
@@ -637,92 +658,233 @@
         }
 
         function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
+            document.getElementById('mobile-menu').classList.toggle('hidden');
             document.body.classList.toggle('overflow-hidden');
         }
 
-        function sendOrderToTelegram() {
+        function sendInvoiceToTelegram() {
             if (cart.length === 0) return;
 
-            const telegramUsername = 'maklinger'; // Updated Telegram username based on original request's link.
-            let message = 'សួស្តី!👋 ខ្ញុំចង់កម្ម៉ង់ភេសជ្ជៈខាងក្រោម៖👇\n\n';
-            
-            let totalKhr = 0;
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                totalKhr += itemTotal;
-                const itemPriceInCurrentCurrency = formatPrice(itemTotal);
-                const itemName = item.name[currentLang] || item.name['km'];
-                
-                const itemSizeKey = item.size + 'Size';
-                const itemSize = getTranslation('cart.' + itemSizeKey);
+            const telegramUsername = 'maklinger';
+            const invoiceNo = `INV-${Date.now().toString().slice(-6)}`;
+            const date = new Date().toLocaleDateString('sv-SE');
+            const useUSD = currentCurrency === 'usd';
 
-                message += `- ${itemName} (${itemSize}) x ${item.quantity} = ${itemPriceInCurrentCurrency}\n`;
+            let message = '';
+            let totalKhr = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const t = (key) => getTranslation(key, currentLang);
+            const invoiceTitle = t('invoice.title');
+            const invoiceNoLabel = t('invoice.invoice_no');
+            const dateLabel = t('invoice.date');
+            const totalLabel = t('invoice.total');
+            const thankYou = t('cart.telegramThankYou');
+
+            message += `🧾 *${invoiceTitle}* 🧾\n\n`;
+            message += `*${invoiceNoLabel}:* ${invoiceNo}\n`;
+            message += `*${dateLabel}:* ${date}\n`;
+            message += `--------------------------------------\n`;
+            
+            cart.forEach(item => {
+                const itemName = item.name[currentLang] || item.name['km']; 
+                const itemSize = getTranslation('cart.' + item.size + 'Size', currentLang);
+                const itemPriceFormatted = formatPrice(item.price);
+                const itemTotalFormatted = formatPrice(item.price * item.quantity);
+
+                message += `*${itemName} (${itemSize})*\n`;
+                message += `     ${item.quantity} x ${itemPriceFormatted} = ${itemTotalFormatted}\n`;
             });
 
-            const totalPriceInCurrentCurrency = formatPrice(totalKhr);
-            message += `\n*សរុបតម្លៃ៖ ${totalPriceInCurrentCurrency}*`;
+            message += `--------------------------------------\n`;
+            const totalFormatted = formatPrice(totalKhr);
+            message += `*${totalLabel}:* *${totalFormatted}*\n\n`;
+            message += `${thankYou}`;
+            
 
             const encodedMessage = encodeURIComponent(message);
             const url = `https://t.me/${telegramUsername}?text=${encodedMessage}`;
             window.open(url, '_blank');
         }
+
+        function generateInvoiceHTML() {
+            if (cart.length === 0) return '';
+            const invoiceNo = `INV-${Date.now().toString().slice(-6)}`;
+            const date = new Date().toLocaleDateString('sv-SE');
+            let totalKhr = 0;
+            const useUSD = currentCurrency === 'usd';
+
+            let itemsHtml = cart.map(item => {
+                const itemTotalKhr = item.price * item.quantity;
+                totalKhr += itemTotalKhr;
+                const itemName = item.name[currentLang] || item.name['km'];
+                const itemSizeLabel = getTranslation('cart.' + item.size + 'Size');
+
+                const itemPriceDisplay = useUSD 
+                    ? `$${(item.price / KHR_TO_USD_RATE).toFixed(2)}`
+                    : `${item.price.toLocaleString('km-KH')}៛`;
+                
+                const itemTotalDisplay = useUSD
+                    ? `$${(itemTotalKhr / KHR_TO_USD_RATE).toFixed(2)}`
+                    : `${itemTotalKhr.toLocaleString('km-KH')}៛`;
+                
+                return `
+                    <tr class="border-b border-gray-200">
+                        <td class="py-2 pr-2">${itemName} (${itemSizeLabel})</td>
+                        <td class="py-2 px-2 text-center">${item.quantity}</td>
+                        <td class="py-2 px-2 text-right">${itemPriceDisplay}</td>
+                        <td class="py-2 pl-2 text-right font-bold">${itemTotalDisplay}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const subtotalDisplay = useUSD
+                ? `$${(totalKhr / KHR_TO_USD_RATE).toFixed(2)}`
+                : `${totalKhr.toLocaleString('km-KH')}៛`;
+
+            const taxDisplay = useUSD ? `$0.00` : `0៛`;
+
+            const totalDisplay = useUSD
+                ? `$${(totalKhr / KHR_TO_USD_RATE).toFixed(2)}`
+                : `${totalKhr.toLocaleString('km-KH')}៛`;
+
+            return `
+                <div class="p-4 sm:p-6 bg-white text-gray-800 font-sans" style="font-family: 'Kantumruy Pro', sans-serif;">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-theme-primary">ម៉ាក់លីងអ៊័រ-Coffee ☕</h2>
+                        <p class="text-2xl font-bold mt-2" data-i18n="invoice.title">${getTranslation('invoice.title')}</p>
+                    </div>
+                    <div class="flex justify-between mb-6 text-gray-600 text-sm">
+                        <div>
+                            <p><strong>${getTranslation('invoice.invoice_no')}:</strong></p>
+                            <p>${invoiceNo}</p>
+                        </div>
+                        <div class="text-right">
+                            <p><strong>${getTranslation('invoice.date')}:</strong></p>
+                            <p>${date}</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm sm:text-base">
+                            <thead>
+                                <tr class="border-b-2 border-gray-300 text-gray-500">
+                                    <th class="py-2 pr-2 text-left font-semibold">${getTranslation('invoice.item')}</th>
+                                    <th class="py-2 px-2 text-center font-semibold">${getTranslation('invoice.qty')}</th>
+                                    <th class="py-2 px-2 text-right font-semibold">${getTranslation('invoice.price')}</th>
+                                    <th class="py-2 pl-2 text-right font-semibold">${getTranslation('invoice.total')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>${itemsHtml}</tbody>
+                        </table>
+                    </div>
+                    <div class="mt-8 flex justify-end">
+                        <div class="w-full sm:w-2/3 md:w-1/2 space-y-2 text-gray-700">
+                            <div class="flex justify-between">
+                                <span>${getTranslation('invoice.subtotal')}:</span>
+                                <span>${subtotalDisplay}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>${getTranslation('invoice.tax')}:</span>
+                                <span>${taxDisplay}</span>
+                            </div>
+                            <div class="flex justify-between text-xl font-bold text-theme-primary border-t-2 border-dashed pt-2 mt-2">
+                                <span>${getTranslation('invoice.total')}:</span>
+                                <span>${totalDisplay}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8 text-gray-500 text-sm">
+                        <p>${getTranslation('invoice.thank_you')}</p>
+                    </div>
+                </div>
+            `;
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
+            // --- Basic Event Listeners ---
             document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
             document.getElementById('close-mobile-menu').addEventListener('click', toggleMobileMenu);
             document.querySelectorAll('#mobile-menu a').forEach(link => link.addEventListener('click', toggleMobileMenu));
             document.querySelectorAll('.lang-button').forEach(button => {
                 button.addEventListener('click', () => setLanguage(button.dataset.lang));
             });
-            
+            document.getElementById('product-search').addEventListener('input', handleProductSearch);
+            document.getElementById('send-invoice-telegram-btn').addEventListener('click', sendInvoiceToTelegram);
+
+            // --- Currency Toggle ---
             document.getElementById('currency-toggle-btn').addEventListener('click', () => {
                 currentCurrency = (currentCurrency === 'khr') ? 'usd' : 'khr';
-                const searchTerm = document.getElementById('product-search')?.value || '';
-                renderProducts(searchTerm);
+                renderProducts(document.getElementById('product-search')?.value || '');
                 updateCartDisplay();
             });
 
+            // --- QR Modal ---
             const qrModal = document.getElementById('qrModal');
             document.getElementById('payment-qr-btn').addEventListener('click', () => {
                 const totalKhr = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
                 document.getElementById('qr-total-amount').textContent = formatPrice(totalKhr);
-                
-                const qrKhrImg = document.getElementById('qr-khr');
-                const qrUsdImg = document.getElementById('qr-usd');
-
-                // Determine which QR code to show based on the current currency setting
-                const totalUsd = totalKhr / KHR_TO_USD_RATE;
-
-                if (currentCurrency === 'khr') {
-                    qrKhrImg.classList.remove('hidden');
-                    qrUsdImg.classList.add('hidden');
-                } else {
-                    qrKhrImg.classList.add('hidden');
-                    qrUsdImg.classList.remove('hidden');
-                }
+                document.getElementById('qr-khr').classList.toggle('hidden', currentCurrency !== 'khr');
+                document.getElementById('qr-usd').classList.toggle('hidden', currentCurrency !== 'usd');
                 qrModal.style.display = 'flex';
             });
             document.getElementById('closeQrModal').addEventListener('click', () => qrModal.style.display = 'none');
             qrModal.addEventListener('click', (e) => { if (e.target === qrModal) qrModal.style.display = 'none'; });
             
+            // --- Cart Message Box ---
             const cartMessageBox = document.getElementById('cartMessageBox');
             cartMessageBox.addEventListener('click', () => {
                 document.getElementById('cart-section').scrollIntoView({ behavior: 'smooth' });
                 cartMessageBox.classList.add('translate-y-4', 'opacity-0');
                 setTimeout(() => cartMessageBox.classList.add('hidden'), 300);
             });
-
-            document.getElementById('send-order-telegram-btn').addEventListener('click', sendOrderToTelegram);
             
-            // New Search Listener
-            document.getElementById('product-search').addEventListener('input', handleProductSearch);
+            // --- Invoice Modal & Downloads ---
+            const invoiceModal = document.getElementById('invoiceModal');
+            const invoiceContentWrapper = document.getElementById('invoice-content-wrapper');
+            
+            document.getElementById('generate-invoice-btn').addEventListener('click', () => {
+                invoiceContentWrapper.innerHTML = generateInvoiceHTML();
+                if (invoiceContentWrapper.innerHTML) {
+                    invoiceModal.style.display = 'flex';
+                }
+            });
 
+            document.getElementById('closeInvoiceModal').addEventListener('click', () => {
+                invoiceModal.style.display = 'none';
+            });
+            
+            invoiceModal.addEventListener('click', (e) => {
+                if (e.target === invoiceModal) invoiceModal.style.display = 'none';
+            });
+
+            document.getElementById('download-img-btn').addEventListener('click', () => {
+                html2canvas(invoiceContentWrapper.querySelector('div'), { scale: 2 }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `invoice-${Date.now()}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            });
+
+            document.getElementById('download-pdf-btn').addEventListener('click', () => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'p', unit: 'px', format: 'a4', hotfixes: ['px_scaling'] });
+                const invoiceElement = invoiceContentWrapper.querySelector('div');
+                
+                html2canvas(invoiceElement, { scale: 2, useCORS: true }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(`invoice-${Date.now()}.pdf`);
+                });
+            });
+
+            // --- Initial Load ---
             setLanguage(currentLang);
         });
         
-        // Expose functions globally for inline HTML event handlers (like onclick)
         window.addToCart = addToCart;
         window.updateCart = updateCart;
     </script>
