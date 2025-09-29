@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+about.html contact.html index.html products.html<!DOCTYPE html>
 <html lang="km">
 <head>
     <meta charset="UTF-8">
@@ -84,7 +84,7 @@
     <main>
        <section id="products-list" class="py-16 px-4">
             <div class="container mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-12" data-i18n="products.heading">☕ភេសជ្ជៈនិងគ្រឿងកំប៉ុង🥤</h2>
+                <h2 class="text-4xl font-bold mb-12" data-i18n="products.heading">☕បញ្ជីភេសជ្ជៈ🥤</h2>
                 
                 <!-- ស្វែងរកភេសជ្ជៈ Search Input -->
                 <div class="mb-10 max-w-lg mx-auto">
@@ -114,10 +114,10 @@
                         <span id="cart-total" class="text-3xl font-extrabold text-theme-primary">0៛</span>
                     </div>
                      <div class="text-right mb-6">
-                        <button id="currency-toggle-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full transition-colors text-sm">
-                            <i class="fas fa-exchange-alt mr-2"></i> <span data-i18n="cart.switchToUSD">ប្តូរទៅជា USD</span>
-                        </button>
-                    </div>
+                         <button id="currency-toggle-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full transition-colors text-sm">
+                             <i class="fas fa-exchange-alt mr-2"></i> <span data-i18n="cart.switchToUSD">ប្តូរទៅជា USD</span>
+                         </button>
+                     </div>
                     <div class="space-y-4 text-center">
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
                             <button id="payment-qr-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-full w-full sm:w-auto transition-transform hover:scale-105">
@@ -184,7 +184,7 @@
                 pageTitle: 'Mak LingEr-Coffee - ភេសជ្ជៈ & ប្រភេទ',
                 nav: { home: 'ទំព័រដើម', products: 'ភេសជ្ជៈគ្រប់មុខ', about: 'អំពីពួកយើង', contact: 'ទំនាក់ទំនង', cart: 'រទេះទំនិញ' },
                 products: { 
-                    heading: '☕ភេសជ្ជៈនិងគ្រឿងកំប៉ុង🥤', 
+                    heading: '☕បញ្ជីភេសជ្ជៈ🥤', 
                     searchPlaceholder: 'ស្វែងរកភេសជ្ជៈ...',
                     noResults: 'រកមិនឃើញភេសជ្ជៈណាត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
                     categories: {
@@ -583,7 +583,6 @@
                 let totalKhr = 0;
                 cart.forEach(item => {
                     totalKhr += item.price * item.quantity;
-                    const itemPriceDisplay = formatPrice(item.price);
                     const itemTotalDisplay = formatPrice(item.price * item.quantity);
                     
                     // item.size is now 'normal', 'large', 'can', or 'bottle'
@@ -591,23 +590,30 @@
                     const itemSizeLabel = getTranslation('cart.' + itemSizeKey);
 
                     const itemEl = document.createElement('div');
-                    itemEl.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm border gap-2';
+                    // UPDATED RESPONSIVE CART ITEM LAYOUT
+                    itemEl.className = 'bg-gray-50 p-4 rounded-xl shadow-sm border';
                     itemEl.innerHTML = `
-                        <div class="flex items-center gap-3 flex-grow min-w-0">
-                            <img src="${item.img}" alt="${item.name[currentLang]}" class="w-16 h-16 object-cover rounded-md border flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Error';">
-                            <div class="min-w-0">
-                                <h4 class="font-semibold truncate">${item.name[currentLang] || item.name['km']} <span class="text-sm text-gray-500">(${itemSizeLabel})</span></h4>
-                                <p class="text-gray-600 font-bold text-sm">@ ${itemPriceDisplay}</p>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <img src="${item.img}" alt="${item.name[currentLang] || item.name['km']}" class="w-16 h-16 object-cover rounded-lg border flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/CCCCCC/FFFFFF?text=Error';">
+                                <div class="min-w-0">
+                                    <h4 class="font-semibold text-gray-800">${item.name[currentLang] || item.name['km']} <span class="text-sm font-medium text-gray-500">(${itemSizeLabel})</span></h4>
+                                     <p class="text-gray-600 font-bold text-sm sm:hidden">Total: <span class="text-theme-primary">${itemTotalDisplay}</span></p> <!-- Total for mobile -->
+                                </div>
+                            </div>
+                            <div class="text-right flex-shrink-0 hidden sm:block">
+                                <p class="font-extrabold text-theme-primary text-lg">${itemTotalDisplay}</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            <button onclick="updateCart('${item.cartId}', 'decrease')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full font-bold text-lg flex items-center justify-center">-</button>
-                            <span class="w-8 text-center font-medium text-lg">${item.quantity}</span>
-                            <button onclick="updateCart('${item.cartId}', 'increase')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full font-bold text-lg flex items-center justify-center">+</button>
-                        </div>
-                        <div class="text-right flex-shrink-0 w-20 sm:w-28">
-                            <p class="font-extrabold text-theme-primary text-lg">${itemTotalDisplay}</p>
-                            <button onclick="updateCart('${item.cartId}', 'remove')" class="text-red-500 hover:text-red-700 text-sm mt-1" data-i18n="cart.removeButton">លុប</button>
+                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
+                            <div>
+                                <button onclick="updateCart('${item.cartId}', 'remove')" class="text-red-500 hover:text-red-700 text-sm font-semibold" data-i18n="cart.removeButton">Remove</button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="updateCart('${item.cartId}', 'decrease')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 w-9 h-9 rounded-full font-bold text-xl flex items-center justify-center transition-transform hover:scale-110">-</button>
+                                <span class="w-10 text-center font-bold text-xl text-gray-800">${item.quantity}</span>
+                                <button onclick="updateCart('${item.cartId}', 'increase')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 w-9 h-9 rounded-full font-bold text-xl flex items-center justify-center transition-transform hover:scale-110">+</button>
+                            </div>
                         </div>
                     `;
                     container.appendChild(itemEl);
